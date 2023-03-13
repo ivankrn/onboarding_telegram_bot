@@ -3,7 +3,14 @@ package com.ppteam.onboardingtelegrambot;
 import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
+import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
+import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
+import com.ppteam.onboardingtelegrambot.database.ArticleTopicRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -18,6 +25,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
+    @Autowired
+    private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleTopicRepository articleTopicRepository;
 
     public OnboardingTelegramBot(BotConfig botConfig) {
         this.botConfig = botConfig;
@@ -50,7 +61,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             chatId = update.getCallbackQuery().getMessage().getChatId();
-            receivedMessage = update.getCallbackQuery().getMessage().getText();
+            receivedMessage = update.getCallbackQuery().getData();
             processAnswer(receivedMessage, chatId);
         }
     }
@@ -75,7 +86,36 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             case CallbackQueryCommand.HELP:
                 sendText(chatId, BotCommands.HELP_TEXT);
                 break;
+            case CallbackQueryCommand.ADMIN_PANEL:
+                sendAdminMenu(chatId);
+                break;
+            case CallbackQueryCommand.GET_TOPICS:
+                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[2]);
+                sendTopicChoiceMenu(chatId, pageNumber);
+                break;
         }
+    }
+
+    private void sendTopicChoiceMenu(long chatId, int pageId) {
+        Pageable page = PageRequest.of(pageId, 10);
+        Page<ArticleTopic> articleTopics = articleTopicRepository.findAll(page);
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("Выберите тему:");
+        message.setReplyMarkup(Buttons.topicChoiceMarkup(articleTopics));
+        executeMessageWithLogging(message);
+    }
+
+    private void sendArticles(long chatId) {
+
+    }
+
+    private void sendAdminMenu(long chatId) {
+        SendMessage message = new SendMessage();
+        message.setText("Выберите действие:");
+        message.setChatId(chatId);
+        message.setReplyMarkup(Buttons.adminPanelMarkup());
+        executeMessageWithLogging(message);
     }
 
     private void sendText(long chatId, String text) {
