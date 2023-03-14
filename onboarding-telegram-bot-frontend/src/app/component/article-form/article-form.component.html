@@ -11,16 +11,10 @@
             required #title="ngModel">
         </div>
         <div [hidden]="!title.pristine" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
-        <div class="form-group">
-            <label for="topicId">ID темы</label>
-            <input type="text" [(ngModel)]="article.topicId" 
-              class="form-control" 
-              id="topicId" 
-              name="topicId" 
-              placeholder="Введите ID темы"
-              required #topicId="ngModel">
-          </div>
-        <div [hidden]="!topicId.pristine" class="alert alert-danger">ID темы статьи не может быть пустым</div>
+        <span>Тема {{article.topicId}}</span>
+        <select class="form-select" [(ngModel)]="article.topicId" #topic="ngModel" name="topicId">
+          <option *ngFor="let topic of articleTopics | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
+        </select>
         <div class="form-group">
           <label for="content">Текст</label>
           <input type="text" [(ngModel)]="article.content" 
