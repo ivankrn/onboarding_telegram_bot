@@ -1,10 +1,7 @@
 package com.ppteam.onboardingtelegrambot.database;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,6 +13,8 @@ import java.time.OffsetDateTime;
 @Table(name = "article")
 public class Article {
     @Id
+    @SequenceGenerator(name = "article_id_seq", sequenceName = "article_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_id_seq")
     private long id;
     @NotNull
     @Column(name = "topic_id")
@@ -30,7 +29,6 @@ public class Article {
     private String usefulLinks;
     @Column(name = "test_link")
     private String testLink;
-    @NotNull
-    @Column(name = "created_on", nullable = false)
+    @Column(name = "created_on", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdOn;
 }

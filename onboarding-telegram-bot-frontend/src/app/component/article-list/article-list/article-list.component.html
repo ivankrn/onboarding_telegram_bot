@@ -1,0 +1,26 @@
+<div class="card my-5">
+    <div class="card-body">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Заголовок</th>
+            <th scope="col">Текст</th>
+            <th scope="col">Полезные ссылки</th>
+            <th scope="col">Ссылка на тест</th>
+            <th scope="col">Дата создания</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let article of articles">
+            <td>{{ article.id }}</td>
+            <td>{{ article.title }}</td>
+            <td>{{ article.content }}</td>
+            <td>{{ article.usefulLinks }}</td>
+            <td>{{ article.testLink }}</td>
+            <td>{{ article.createdOn | date:'d-MM-y' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

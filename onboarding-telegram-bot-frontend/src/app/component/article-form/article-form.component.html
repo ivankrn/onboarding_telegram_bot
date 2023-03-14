@@ -1,0 +1,57 @@
+<div class="card my-5">
+    <div class="card-body">
+      <form (ngSubmit)="onSubmit()" #articleForm="ngForm">
+        <div class="form-group">
+          <label for="title">Заголовок</label>
+          <input type="text" [(ngModel)]="article.title" 
+            class="form-control" 
+            id="title" 
+            name="title" 
+            placeholder="Введите заголовок статьи"
+            required #title="ngModel">
+        </div>
+        <div [hidden]="!title.pristine" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
+        <div class="form-group">
+            <label for="topicId">ID темы</label>
+            <input type="text" [(ngModel)]="article.topicId" 
+              class="form-control" 
+              id="topicId" 
+              name="topicId" 
+              placeholder="Введите ID темы"
+              required #topicId="ngModel">
+          </div>
+        <div [hidden]="!topicId.pristine" class="alert alert-danger">ID темы статьи не может быть пустым</div>
+        <div class="form-group">
+          <label for="content">Текст</label>
+          <input type="text" [(ngModel)]="article.content" 
+            class="form-control" 
+            id="content" 
+            name="content" 
+            placeholder="Введите текст статьи"
+            required #content="ngModel">
+          <div [hidden]="!content.pristine" class="alert alert-danger">Текст статьи не может быть пустым</div>
+        </div>
+        <div class="form-group">
+            <label for="usefulLinks">Полезные ссылки</label>
+            <input type="text" [(ngModel)]="article.usefulLinks" 
+              class="form-control" 
+              id="usefulLinks" 
+              name="usefulLinks" 
+              placeholder="Введите полезные ссылки"
+              #usefulLinks="ngModel">
+        </div>
+        <div class="form-group">
+            <label for="testLink">Ссылка на тест</label>
+            <input type="text" [(ngModel)]="article.testLink" 
+              class="form-control" 
+              id="testLink" 
+              name="testLink" 
+              placeholder="Введите ссылку на тест"
+              #testLink="ngModel">
+        </div>
+        <button type="submit" [disabled]="!articleForm.form.valid" 
+          class="btn btn-info">Добавить</button>
+      </form>
+    </div>
+  </div>
+  
