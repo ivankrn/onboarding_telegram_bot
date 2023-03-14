@@ -14,9 +14,16 @@ export class ArticleListComponent implements OnInit {
   constructor(private articleService: ArticleService) { }
 
   ngOnInit(): void {
+    this.updateList();
+  }
+
+  onDelete(article: Article) {
+    this.articleService.delete(article.id).subscribe(r => this.updateList());
+  }
+
+  updateList() {
     this.articleService.findAll().subscribe(data => {
       this.articles = data;
     });
   }
-
 }

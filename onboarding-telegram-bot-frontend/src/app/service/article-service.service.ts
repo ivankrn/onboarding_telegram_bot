@@ -8,7 +8,7 @@ import { Article } from '../model/article';
 })
 export class ArticleService {
 
-  private apiUrl: string = "http://localhost:8080/articles"
+  private apiUrl: string = "http://localhost:8080/api/articles"
 
   constructor(private httpClient: HttpClient) { }
 
@@ -18,5 +18,9 @@ export class ArticleService {
 
   public save(article: Article) {
     return this.httpClient.post<Article>(this.apiUrl, article);
+  }
+
+  public delete(id: number) {
+    return this.httpClient.delete<Article>(this.apiUrl + '/' + id);
   }
 }

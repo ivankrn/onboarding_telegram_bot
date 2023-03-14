@@ -3,7 +3,7 @@
       <table class="table table-bordered table-striped">
         <thead class="thead-dark">
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Тема</th>
             <th scope="col">Заголовок</th>
             <th scope="col">Текст</th>
             <th scope="col">Полезные ссылки</th>
@@ -13,12 +13,13 @@
         </thead>
         <tbody>
           <tr *ngFor="let article of articles">
-            <td>{{ article.id }}</td>
+            <td>{{ article.topicId }}</td>
             <td>{{ article.title }}</td>
             <td>{{ article.content }}</td>
             <td>{{ article.usefulLinks }}</td>
             <td>{{ article.testLink }}</td>
             <td>{{ article.createdOn | date:'d-MM-y' }}</td>
+            <td><button class="btn btn-danger" (click)="onDelete(article)">x</button></td>
           </tr>
         </tbody>
       </table>
