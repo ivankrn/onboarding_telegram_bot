@@ -4,7 +4,6 @@ import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +36,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteArticle(@PathVariable int id) {
-        System.out.println("inside " + id);
-        articleRepository.deleteById((long)id);
+    public void deleteArticle(@PathVariable long id) {
+        articleRepository.deleteById(id);
     }
 }

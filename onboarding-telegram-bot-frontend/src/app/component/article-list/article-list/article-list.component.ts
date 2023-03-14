@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Article } from 'src/app/model/article';
-import { ArticleService } from 'src/app/service/article-service.service';
+import { ArticleTopicService } from 'src/app/service/article-topic.service';
+import { ArticleService } from 'src/app/service/article.service';
 
 @Component({
   selector: 'app-article-list',
@@ -10,11 +11,13 @@ import { ArticleService } from 'src/app/service/article-service.service';
 export class ArticleListComponent implements OnInit {
 
   articles: Article[];
+  articleTopics: Map<number, string>;
 
-  constructor(private articleService: ArticleService) { }
+  constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) { }
 
   ngOnInit(): void {
     this.updateList();
+    this.updateTopics();
   }
 
   onDelete(article: Article) {
@@ -24,6 +27,12 @@ export class ArticleListComponent implements OnInit {
   updateList() {
     this.articleService.findAll().subscribe(data => {
       this.articles = data;
+    });
+  }
+
+  updateTopics() {
+    this.articleTopicService.getTopicsNames().subscribe(data => {
+      this.articleTopics = data;
     });
   }
 }

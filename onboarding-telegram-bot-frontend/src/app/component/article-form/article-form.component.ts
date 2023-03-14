@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Article } from 'src/app/model/article';
-import { ArticleService } from 'src/app/service/article-service.service';
+import { ArticleService } from 'src/app/service/article.service';
 
 @Component({
   selector: 'app-article-form',
