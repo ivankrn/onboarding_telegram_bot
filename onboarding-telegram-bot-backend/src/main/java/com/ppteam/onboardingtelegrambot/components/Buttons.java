@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.components;
 
 import com.ppteam.onboardingtelegrambot.CallbackQueryCommand;
+import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
 import org.springframework.data.domain.Page;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -28,7 +29,7 @@ public class Buttons {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         topics.get().forEach(topic -> {
             InlineKeyboardButton button = new InlineKeyboardButton(topic.getName());
-            button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC + " " + topic.getId());
+            button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topic.getId() + " page 0");
             rows.add(List.of(button));
         });
         List<InlineKeyboardButton> pagination = new ArrayList<>(2);
@@ -49,20 +50,26 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup adminPanelMarkup() {
+    public static InlineKeyboardMarkup articleChoiceMarkup(Page<Article> articles, int topicId) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        InlineKeyboardButton addArticleButton = new InlineKeyboardButton("Добавить статью");
-        addArticleButton.setCallbackData(CallbackQueryCommand.ADD_ARTICLE);
-        InlineKeyboardButton deleteArticleButton = new InlineKeyboardButton("Удалить статью");
-        deleteArticleButton.setCallbackData(CallbackQueryCommand.DELETE_ARTICLE);
-        InlineKeyboardButton addArticleTopicButton = new InlineKeyboardButton("Добавить тему");
-        addArticleTopicButton.setCallbackData(CallbackQueryCommand.ADD_TOPIC);
-        InlineKeyboardButton deleteArticleTopicButton = new InlineKeyboardButton("Удалить тему");
-        deleteArticleTopicButton.setCallbackData(CallbackQueryCommand.DELETE_TOPIC);
-        rows.add(List.of(addArticleButton));
-        rows.add(List.of(deleteArticleButton));
-        rows.add(List.of(addArticleTopicButton));
-        rows.add(List.of(deleteArticleTopicButton));
+        articles.get().forEach(article -> {
+            InlineKeyboardButton button = new InlineKeyboardButton(article.getTitle());
+            button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLE_BY_ID + " " + article.getId());
+            rows.add(List.of(button));
+        });
+        List<InlineKeyboardButton> pagination = new ArrayList<>(2);
+        int currentPageNumber = articles.getPageable().getPageNumber();
+        if (currentPageNumber > 0) {
+            InlineKeyboardButton previousPageButton = new InlineKeyboardButton("<");
+            previousPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber - 1));
+            pagination.add(previousPageButton);
+        }
+        if (currentPageNumber < articles.getTotalPages() - 1) {
+            InlineKeyboardButton nextPageButton = new InlineKeyboardButton(">");
+            nextPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber + 1));
+            pagination.add(nextPageButton);
+        }
+        rows.add(pagination);
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;

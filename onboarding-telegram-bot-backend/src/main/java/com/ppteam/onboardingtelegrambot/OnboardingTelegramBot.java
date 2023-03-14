@@ -3,6 +3,7 @@ package com.ppteam.onboardingtelegrambot;
 import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
+import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
 import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
 import com.ppteam.onboardingtelegrambot.database.ArticleTopicRepository;
@@ -19,6 +20,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.time.format.DateTimeFormatter;
 
 @Component
 @Slf4j
@@ -93,11 +96,20 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 int pageNumber = Integer.parseInt(receivedMessage.split(" ")[2]);
                 sendTopicChoiceMenu(chatId, pageNumber);
                 break;
+            case CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID:
+                int topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                sendArticlesByTopicId(chatId, pageNumber, topicId);
+                break;
+            case CallbackQueryCommand.BROWSE_ARTICLE_BY_ID:
+                int articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                sendArticleById(chatId, articleId);
+                break;
         }
     }
 
-    private void sendTopicChoiceMenu(long chatId, int pageId) {
-        Pageable page = PageRequest.of(pageId, 10);
+    private void sendTopicChoiceMenu(long chatId, int pageNumber) {
+        Pageable page = PageRequest.of(pageNumber, 10);
         Page<ArticleTopic> articleTopics = articleTopicRepository.findAll(page);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -106,15 +118,42 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void sendArticles(long chatId) {
+    private void sendArticlesByTopicId(long chatId, int pageNumber, int topicId) {
+        Pageable page = PageRequest.of(pageNumber, 10);
+        Page<Article> articles = articleRepository.findByTopicId(topicId, page);
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("Выберите статью:");
+        message.setReplyMarkup(Buttons.articleChoiceMarkup(articles, topicId));
+        executeMessageWithLogging(message);
+    }
 
+    private void sendArticleById(long chatId, int articleId) {
+        Article article = articleRepository.findById(articleId);
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(formatArticle(article));
+        executeMessageWithLogging(message);
+    }
+
+    private String formatArticle(Article article) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\u2139 " + article.getTitle() + "\n\n");
+        sb.append(article.getContent() + "\n\n");
+        if (article.getUsefulLinks() != null && !article.getUsefulLinks().isBlank()) {
+            sb.append("\uD83D\uDCD5 Полезные ссылки:\n" + article.getUsefulLinks() + "\n\n");
+        }
+        if (article.getTestLink() != null && !article.getTestLink().isBlank()) {
+            sb.append("\uD83D\uDCDD Ссылка на тест:\n" + article.getTestLink() + "\n\n");
+        }
+        sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedOn().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        return sb.toString();
     }
 
     private void sendAdminMenu(long chatId) {
         SendMessage message = new SendMessage();
-        message.setText("Выберите действие:");
+        message.setText("Здесь будет ссылка на админ-панель");
         message.setChatId(chatId);
-        message.setReplyMarkup(Buttons.adminPanelMarkup());
         executeMessageWithLogging(message);
     }
 
