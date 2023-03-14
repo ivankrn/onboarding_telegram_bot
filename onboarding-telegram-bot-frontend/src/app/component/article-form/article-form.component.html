@@ -11,9 +11,9 @@
             required #title="ngModel">
         </div>
         <div [hidden]="!title.pristine" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
-        <span>Тема {{article.topicId}}</span>
+        <span>Тема</span>
         <select class="form-select" [(ngModel)]="article.topicId" #topic="ngModel" name="topicId">
-          <option *ngFor="let topic of articleTopics | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
+          <option *ngFor="let topic of articleTopics | async | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
         </select>
         <div class="form-group">
           <label for="content">Текст</label>

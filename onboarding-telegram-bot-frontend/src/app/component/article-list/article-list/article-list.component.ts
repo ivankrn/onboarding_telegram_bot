@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
@@ -11,9 +12,9 @@ import { ArticleService } from 'src/app/service/article.service';
 export class ArticleListComponent implements OnInit {
 
   articles: Article[];
-  articleTopics: Map<number, string>;
+  articleTopics: Observable<Map<number, string>>;
 
-  constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) { }
+  constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) {}
 
   ngOnInit(): void {
     this.updateList();
@@ -31,8 +32,6 @@ export class ArticleListComponent implements OnInit {
   }
 
   updateTopics() {
-    this.articleTopicService.getTopicsNames().subscribe(data => {
-      this.articleTopics = data;
-    });
+    this.articleTopics = this.articleTopicService.getTopicsNames();
   }
 }

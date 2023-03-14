@@ -13,7 +13,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let article of articles">
-            <td>{{ articleTopics.get(article.topicId) }}</td>
+            <td>{{ (articleTopics | async)?.get(article.topicId) }}</td>
             <td>{{ article.title }}</td>
             <td>{{ article.content }}</td>
             <td>{{ article.usefulLinks }}</td>

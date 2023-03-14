@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
@@ -12,7 +13,7 @@ import { ArticleService } from 'src/app/service/article.service';
 export class ArticleFormComponent {
 
   article: Article;
-  articleTopics: Map<number, string>;
+  articleTopics: Observable<Map<number, string>>;
 
   constructor(private route: ActivatedRoute, private router: Router, 
     private articleService: ArticleService, private articleTopicService: ArticleTopicService) {
@@ -21,7 +22,7 @@ export class ArticleFormComponent {
   }
 
   public onSubmit() {
-    this.articleService.save(this.article).subscribe(result => this.goToArticleList());
+    this.articleService.save(this.article).subscribe(() => this.goToArticleList());
   }
 
   public goToArticleList() {
@@ -29,8 +30,6 @@ export class ArticleFormComponent {
   }
 
   updateTopics() {
-    this.articleTopicService.getTopicsNames().subscribe(data => {
-      this.articleTopics = data;
-    });
+    this.articleTopics = this.articleTopicService.getTopicsNames();
   }
 }

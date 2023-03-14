@@ -10,30 +10,21 @@ import { map } from 'rxjs/operators';
 export class ArticleTopicService {
 
   private apiUrl: string = "http://localhost:8080/api/article_topics";
-  private topicsNames: Map<number, string> = new Map();
-  private topicsNames$: Subject<Map<number, string>> = new Subject();
 
-  constructor(private httpClient: HttpClient) {
-    this.loadTopics().subscribe(data => {
-      this.topicsNames$.next(data);
-    })
-  }
+  constructor(private httpClient: HttpClient) {}
 
   public getTopicsNames() {
-    return this.topicsNames$;
+    return this.findAll().pipe(map(topics => {
+      let names: Map<number, string> = new Map();
+      topics.forEach(topic => {
+        names.set(topic.id, topic.name)
+      });
+      return names;
+    }))
   }
 
   private findAll(): Observable<ArticleTopic[]> {
     return this.httpClient.get<ArticleTopic[]>(this.apiUrl);
-  }
-
-  private loadTopics() {
-    return this.findAll().pipe(map(articleTopics => {
-      articleTopics.forEach(topic => {
-        this.topicsNames.set(topic.id, topic.name);
-      });
-      return this.topicsNames;
-    }))
   }
 
 }
