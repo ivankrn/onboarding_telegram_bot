@@ -11,18 +11,29 @@ import { ArticleService } from 'src/app/service/article.service';
 })
 export class ArticleListComponent implements OnInit {
 
+  articlesTotalCount: number;
   articles: Article[];
   articleTopics: Observable<Map<number, string>>;
 
   constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.updateArticlesTotalCount();
     this.updateList();
     this.updateTopics();
   }
 
   onDelete(article: Article) {
-    this.articleService.delete(article.id).subscribe(r => this.updateList());
+    this.articleService.delete(article.id).subscribe(() => {
+      this.updateArticlesTotalCount();
+      this.updateList();
+    });
+  }
+
+  updateArticlesTotalCount() {
+    this.articleService.count().subscribe(data => {
+      this.articlesTotalCount = data;
+    });
   }
 
   updateList() {
@@ -34,4 +45,5 @@ export class ArticleListComponent implements OnInit {
   updateTopics() {
     this.articleTopics = this.articleTopicService.getTopicsNames();
   }
+
 }

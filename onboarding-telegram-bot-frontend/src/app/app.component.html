@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
   <div class="row">
     <div class="col-md-12">
       <div class="card bg-dark my-5">
@@ -16,5 +16,27 @@
       </div>
       <router-outlet></router-outlet>
     </div>
+  </div>
+</div> -->
+<header class="navbar bg-success sticky-top shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">{{ title }}</a>
+</header>
+<div class="container-fluid">
+  <div class="row">
+      <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+          <div class="position-sticky pt-3">
+              <ul class="nav flex-column">
+                  <li class="nav-item active">
+                      <a routerLink="/articles" class="nav-link" href="#">Статьи</a>
+                  </li>
+                  <li class="nav-item">
+                      <a routerLink="/article" class="nav-link" href="#">Тесты</a>
+                  </li>
+              </ul>
+          </div>
+      </nav>
+      <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 mt-4">
+        <router-outlet></router-outlet>
+      </main>
   </div>
 </div>

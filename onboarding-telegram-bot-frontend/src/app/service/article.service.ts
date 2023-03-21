@@ -16,6 +16,10 @@ export class ArticleService {
     return this.httpClient.get<Article[]>(this.apiUrl);
   }
 
+  public count(): Observable<number> {
+    return this.httpClient.get<number>(this.apiUrl + "/count");
+  }
+
   public save(article: Article) {
     return this.httpClient.post<Article>(this.apiUrl, article);
   }

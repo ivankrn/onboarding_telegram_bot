@@ -25,13 +25,18 @@ public class ArticleController {
         return articleRepository.findAll(page).getContent();
     }
 
+    @GetMapping("/count")
+    public long getArticleCount() {
+        return articleRepository.count();
+    }
+
     @GetMapping("/{id}")
     public Article getArticle(@PathVariable int id) {
         return articleRepository.findById(id);
     }
 
     @PostMapping
-    public void addArticle(@RequestBody Article article) {
+    public void saveArticle(@RequestBody Article article) {
         articleRepository.save(article);
     }
 

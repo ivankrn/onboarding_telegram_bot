@@ -10,11 +10,12 @@
             placeholder="Введите заголовок статьи"
             required #title="ngModel">
         </div>
-        <div [hidden]="!title.pristine" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
+        <div [hidden]="article.title && article.title.length != 0" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
         <span>Тема</span>
         <select class="form-select" [(ngModel)]="article.topicId" #topic="ngModel" name="topicId">
           <option *ngFor="let topic of articleTopics | async | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
         </select>
+        <div [hidden]="article.topicId && article.topicId != 0" class="alert alert-danger">Тема статьи не может быть пустой</div>
         <div class="form-group">
           <label for="content">Текст</label>
           <input type="text" [(ngModel)]="article.content" 
@@ -23,7 +24,7 @@
             name="content" 
             placeholder="Введите текст статьи"
             required #content="ngModel">
-          <div [hidden]="!content.pristine" class="alert alert-danger">Текст статьи не может быть пустым</div>
+          <div [hidden]="article.content && article.content.length != 0" class="alert alert-danger">Текст статьи не может быть пустым</div>
         </div>
         <div class="form-group">
             <label for="usefulLinks">Полезные ссылки</label>
@@ -43,8 +44,10 @@
               placeholder="Введите ссылку на тест"
               #testLink="ngModel">
         </div>
-        <button type="submit" [disabled]="!articleForm.form.valid" 
-          class="btn btn-info">Добавить</button>
+        <div class="form-group text-end mt-3">
+          <button routerLink="/articles" type="button" class="btn btn-danger mr-auto">Отмена</button>
+          <button type="submit" [disabled]="!articleForm.form.valid" class="btn btn-success">OK</button>
+        </div>
       </form>
     </div>
   </div>
