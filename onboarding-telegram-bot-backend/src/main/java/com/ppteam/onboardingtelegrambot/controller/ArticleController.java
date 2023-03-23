@@ -2,6 +2,7 @@ package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class ArticleController {
     }
 
     @PostMapping
-    public void saveArticle(@RequestBody Article article) {
+    public void saveArticle(@RequestBody @Valid Article article) {
         articleRepository.save(article);
     }
 

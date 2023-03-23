@@ -1,35 +1,42 @@
 package com.ppteam.onboardingtelegrambot.components;
 
 import com.ppteam.onboardingtelegrambot.CallbackQueryCommand;
-import com.ppteam.onboardingtelegrambot.database.Article;
-import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
+import com.ppteam.onboardingtelegrambot.database.*;
 import org.springframework.data.domain.Page;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Buttons {
 
     public static InlineKeyboardMarkup startBotMarkup() {
-        InlineKeyboardButton browseArticleButton = new InlineKeyboardButton("Почитать статьи");
-        browseArticleButton.setCallbackData(CallbackQueryCommand.GET_TOPICS + " page 0");
+        InlineKeyboardButton browseArticlesButton = new InlineKeyboardButton("Почитать статьи");
+        browseArticlesButton.setCallbackData(CallbackQueryCommand.GET_TOPICS + " article page 0");
+        InlineKeyboardButton browseTestsButton = new InlineKeyboardButton("Порешать тесты");
+        browseTestsButton.setCallbackData(CallbackQueryCommand.GET_TOPICS + " test page 0");
         InlineKeyboardButton adminPanelButton = new InlineKeyboardButton("Панель управления");
         adminPanelButton.setCallbackData(CallbackQueryCommand.ADMIN_PANEL);
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        rows.add(List.of(browseArticleButton));
+        rows.add(List.of(browseArticlesButton));
+        rows.add(List.of(browseTestsButton));
         rows.add(List.of(adminPanelButton));
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;
     }
 
-    public static InlineKeyboardMarkup topicChoiceMarkup(Page<ArticleTopic> topics) {
+    public static InlineKeyboardMarkup topicChoiceMarkup(Page<ArticleTopic> topics, boolean isTestBrowsingMode) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         topics.get().forEach(topic -> {
             InlineKeyboardButton button = new InlineKeyboardButton(topic.getName());
-            button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topic.getId() + " page 0");
+            if (isTestBrowsingMode) {
+                button.setCallbackData(CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID + " " + topic.getId() + " page 0");
+            } else {
+                button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topic.getId() + " page 0");
+            }
             rows.add(List.of(button));
         });
         List<InlineKeyboardButton> pagination = new ArrayList<>(2);
@@ -50,26 +57,54 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup articleChoiceMarkup(Page<Article> articles, int topicId) {
+    public static InlineKeyboardMarkup materialChoiceMarkup(Page<? extends Material> materials, int topicId, boolean isTestBrowsingMode) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        articles.get().forEach(article -> {
-            InlineKeyboardButton button = new InlineKeyboardButton(article.getTitle());
-            button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLE_BY_ID + " " + article.getId());
+        materials.get().forEach(material -> {
+            InlineKeyboardButton button = new InlineKeyboardButton(material.getTitle());
+            if (isTestBrowsingMode) {
+                button.setCallbackData(CallbackQueryCommand.BEGIN_TEST_BY_ID + " " + material.getId());
+            } else {
+                button.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLE_BY_ID + " " + material.getId());
+            }
             rows.add(List.of(button));
         });
         List<InlineKeyboardButton> pagination = new ArrayList<>(2);
-        int currentPageNumber = articles.getPageable().getPageNumber();
+        int currentPageNumber = materials.getPageable().getPageNumber();
         if (currentPageNumber > 0) {
             InlineKeyboardButton previousPageButton = new InlineKeyboardButton("<");
-            previousPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber - 1));
+            if (isTestBrowsingMode) {
+                previousPageButton.setCallbackData(CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber - 1));
+            } else {
+                previousPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber - 1));
+            }
             pagination.add(previousPageButton);
         }
-        if (currentPageNumber < articles.getTotalPages() - 1) {
+        if (currentPageNumber < materials.getTotalPages() - 1) {
             InlineKeyboardButton nextPageButton = new InlineKeyboardButton(">");
-            nextPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber + 1));
+            if (isTestBrowsingMode) {
+                nextPageButton.setCallbackData(CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber + 1));
+            } else {
+                nextPageButton.setCallbackData(CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID + " " + topicId + " page " + (currentPageNumber + 1));
+            }
             pagination.add(nextPageButton);
         }
         rows.add(pagination);
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rows);
+        return markup;
+    }
+
+    public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers) {
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        for (TestAnswer answer : answers) {
+            InlineKeyboardButton button = new InlineKeyboardButton(answer.getAnswer());
+            if (answer.isTrue()) {
+                button.setCallbackData(CallbackQueryCommand.CHOOSE_CORRECT_ANSWER);
+            } else {
+                button.setCallbackData(CallbackQueryCommand.CHOOSE_INCORRECT_ANSWER);
+            }
+            rows.add(List.of(button));
+        }
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;

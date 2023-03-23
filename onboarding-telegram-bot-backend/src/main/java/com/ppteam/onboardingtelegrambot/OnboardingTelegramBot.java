@@ -3,10 +3,7 @@ package com.ppteam.onboardingtelegrambot;
 import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
-import com.ppteam.onboardingtelegrambot.database.Article;
-import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
-import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
-import com.ppteam.onboardingtelegrambot.database.ArticleTopicRepository;
+import com.ppteam.onboardingtelegrambot.database.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -30,6 +28,12 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private TestRepository testRepository;
+    @Autowired
+    private TestSessionRepository testSessionRepository;
+    @Autowired
+    private TestSessionPassedQuestionRepository testSessionPassedQuestionRepository;
     @Autowired
     private ArticleTopicRepository articleTopicRepository;
 
@@ -55,17 +59,20 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         long chatId = 0;
+        long userId = 0;
         String receivedMessage;
         if (update.hasMessage()) {
             chatId = update.getMessage().getChatId();
+            userId = update.getMessage().getFrom().getId();
             if (update.getMessage().hasText()) {
                 receivedMessage = update.getMessage().getText();
-                processAnswer(receivedMessage, chatId);
+                processAnswer(receivedMessage, chatId, userId);
             }
         } else if (update.hasCallbackQuery()) {
             chatId = update.getCallbackQuery().getMessage().getChatId();
+            userId = update.getCallbackQuery().getFrom().getId();
             receivedMessage = update.getCallbackQuery().getData();
-            processAnswer(receivedMessage, chatId);
+            processAnswer(receivedMessage, chatId, userId);
         }
     }
 
@@ -77,7 +84,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void processAnswer(String receivedMessage, long chatId) {
+    private void processAnswer(String receivedMessage, long chatId, long userId) {
         String command = receivedMessage;
         if (receivedMessage.split(" ").length > 1) {
             command = receivedMessage.split(" ")[0];
@@ -93,38 +100,59 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 sendAdminMenu(chatId);
                 break;
             case CallbackQueryCommand.GET_TOPICS:
-                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[2]);
-                sendTopicChoiceMenu(chatId, pageNumber);
+                boolean isTestBrowsingMode = receivedMessage.split(" ")[1].equals("test");
+                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                sendTopicChoiceMenu(chatId, pageNumber, isTestBrowsingMode);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID:
                 int topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
-                sendArticlesByTopicId(chatId, pageNumber, topicId);
+                sendMaterialsByTopicId(chatId, pageNumber, topicId, false);
+                break;
+            case CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID:
+                topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                sendMaterialsByTopicId(chatId, pageNumber, topicId, true);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLE_BY_ID:
                 int articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 sendArticleById(chatId, articleId);
                 break;
+            case CallbackQueryCommand.BEGIN_TEST_BY_ID:
+                int testId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                beginTestById(chatId, userId, testId);
+                break;
+            case CallbackQueryCommand.CHOOSE_CORRECT_ANSWER:
+                sendTestQuestion(chatId, userId, true);
+                break;
+            case CallbackQueryCommand.CHOOSE_INCORRECT_ANSWER:
+                sendTestQuestion(chatId, userId, false);
+                break;
         }
     }
 
-    private void sendTopicChoiceMenu(long chatId, int pageNumber) {
+    private void sendTopicChoiceMenu(long chatId, int pageNumber, boolean isTestBrowsingMode) {
         Pageable page = PageRequest.of(pageNumber, 10);
         Page<ArticleTopic> articleTopics = articleTopicRepository.findAll(page);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберите тему:");
-        message.setReplyMarkup(Buttons.topicChoiceMarkup(articleTopics));
+        message.setReplyMarkup(Buttons.topicChoiceMarkup(articleTopics, isTestBrowsingMode));
         executeMessageWithLogging(message);
     }
 
-    private void sendArticlesByTopicId(long chatId, int pageNumber, int topicId) {
+    private void sendMaterialsByTopicId(long chatId, int pageNumber, int topicId, boolean isTestBrowsingMode) {
         Pageable page = PageRequest.of(pageNumber, 10);
-        Page<Article> articles = articleRepository.findByTopicId(topicId, page);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберите статью:");
-        message.setReplyMarkup(Buttons.articleChoiceMarkup(articles, topicId));
+        if (isTestBrowsingMode) {
+            Page<Test> tests = testRepository.findByTopicId(topicId, page);
+            message.setReplyMarkup(Buttons.materialChoiceMarkup(tests, topicId, isTestBrowsingMode));
+        } else {
+            Page<Article> articles = articleRepository.findByTopicId(topicId, page);
+            message.setReplyMarkup(Buttons.materialChoiceMarkup(articles, topicId, isTestBrowsingMode));
+        }
         executeMessageWithLogging(message);
     }
 
@@ -154,6 +182,50 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setText("Здесь будет ссылка на админ-панель");
         message.setChatId(chatId);
+        executeMessageWithLogging(message);
+    }
+
+    private void beginTestById(long chatId, long userId, int testId) {
+        TestSession session = new TestSession();
+        session.setUserId(userId);
+        session.setTestId(testId);
+        testSessionRepository.save(session);
+        sendTestQuestion(chatId, userId, false);
+    }
+
+    private void sendTestQuestion(long chatId, long userId, boolean previousAnswerIsCorrect) {
+        TestSession session = testSessionRepository.findByUserId(userId);
+        if (previousAnswerIsCorrect) {
+            session.setScore(session.getScore() + 1);
+            testSessionRepository.save(session);
+        }
+        Test test = testRepository.findById(session.getTestId());
+        Set<TestQuestion> questions = test.getQuestions();
+        Set<TestSessionPassedQuestion> passedQuestions = session.getPassedQuestions();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        if (passedQuestions.size() < questions.size()) {
+            for (TestQuestion question : questions) {
+                if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == question.getId())) {
+                    TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
+                    passedQuestion.setQuestionId(question.getId());
+                    passedQuestion.setTestSession(session);
+                    testSessionPassedQuestionRepository.save(passedQuestion);
+                    //Set<TestSessionPassedQuestion> newPassedQuestions = new HashSet<>(passedQuestions);
+                    //newPassedQuestions.add(passedQuestion);
+                    //session.setPassedQuestions(newPassedQuestions);
+                    //session.getPassedQuestions().add(passedQuestion);
+                    message.setText(question.getQuestion());
+                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers()));
+                    //testSessionRepository.save(session);
+                    break;
+                }
+            }
+        } else {
+            message.setText("Ваш счет: " + session.getScore());
+            //testSessionPassedQuestionRepository.deleteByTestSessionId(session.getId());
+            testSessionRepository.delete(session);
+        }
         executeMessageWithLogging(message);
     }
 

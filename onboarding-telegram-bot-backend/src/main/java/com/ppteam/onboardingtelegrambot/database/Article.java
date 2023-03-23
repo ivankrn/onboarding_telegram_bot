@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity
 @Table(name = "article")
-public class Article {
+public class Article extends Material {
     @Id
     @SequenceGenerator(name = "article_id_seq", sequenceName = "article_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_id_seq")
