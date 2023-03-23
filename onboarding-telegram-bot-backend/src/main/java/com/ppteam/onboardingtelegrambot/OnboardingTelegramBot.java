@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -30,6 +31,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private ArticleRepository articleRepository;
     @Autowired
     private TestRepository testRepository;
+    @Autowired
+    private TestQuestionRepository testQuestionRepository;
     @Autowired
     private TestSessionRepository testSessionRepository;
     @Autowired
@@ -122,11 +125,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 int testId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 beginTestById(chatId, userId, testId);
                 break;
-            case CallbackQueryCommand.CHOOSE_CORRECT_ANSWER:
-                sendTestQuestion(chatId, userId, true);
-                break;
-            case CallbackQueryCommand.CHOOSE_INCORRECT_ANSWER:
-                sendTestQuestion(chatId, userId, false);
+            case CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID:
+                int questionId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                int answerId = Integer.parseInt(receivedMessage.split(" ")[3]);
+                sendTestQuestion(chatId, userId, questionId, answerId);
                 break;
         }
     }
@@ -145,7 +147,11 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         Pageable page = PageRequest.of(pageNumber, 10);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Выберите статью:");
+        if (isTestBrowsingMode) {
+            message.setText("Выберите тест:");
+        } else {
+            message.setText("Выберите статью:");
+        }
         if (isTestBrowsingMode) {
             Page<Test> tests = testRepository.findByTopicId(topicId, page);
             message.setReplyMarkup(Buttons.materialChoiceMarkup(tests, topicId, isTestBrowsingMode));
@@ -190,29 +196,39 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         session.setUserId(userId);
         session.setTestId(testId);
         testSessionRepository.save(session);
-        sendTestQuestion(chatId, userId, false);
+        sendTestQuestion(chatId, userId, -1, -1);
     }
 
-    private void sendTestQuestion(long chatId, long userId, boolean previousAnswerIsCorrect) {
+    private void sendTestQuestion(long chatId, long userId, int questionId, int answerId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
         TestSession session = testSessionRepository.findByUserId(userId);
-        if (previousAnswerIsCorrect) {
-            session.setScore(session.getScore() + 1);
-            testSessionRepository.save(session);
-        }
         Test test = testRepository.findById(session.getTestId());
         Set<TestQuestion> questions = test.getQuestions();
         Set<TestSessionPassedQuestion> passedQuestions = session.getPassedQuestions();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
+        Optional<TestQuestion> previousQuestion = testQuestionRepository.findById((long)questionId);
+        if (previousQuestion.isPresent()) {
+            if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == questionId)) {
+                if (previousQuestion.get().getCorrectAnswer().getId() == answerId) {
+                    session.setScore(session.getScore() + 1);
+                    testSessionRepository.save(session);
+                }
+            } else {
+                message.setText("Пожалуйста, выберите ответ на текущий вопрос");
+                executeMessageWithLogging(message);
+                return;
+            }
+            TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
+            passedQuestion.setQuestionId(previousQuestion.get().getId());
+            passedQuestion.setTestSession(session);
+            testSessionPassedQuestionRepository.save(passedQuestion);
+            passedQuestions.add(passedQuestion);
+        }
         if (passedQuestions.size() < questions.size()) {
             for (TestQuestion question : questions) {
                 if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == question.getId())) {
-                    TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
-                    passedQuestion.setQuestionId(question.getId());
-                    passedQuestion.setTestSession(session);
-                    testSessionPassedQuestionRepository.save(passedQuestion);
                     message.setText(question.getQuestion());
-                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers(), question.getCorrectAnswer()));
+                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers(), question.getId()));
                     break;
                 }
             }

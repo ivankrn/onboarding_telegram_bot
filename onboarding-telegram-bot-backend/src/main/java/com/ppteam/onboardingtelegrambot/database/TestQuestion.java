@@ -20,7 +20,7 @@ public class TestQuestion {
     @Id
     @SequenceGenerator(name = "test_question_id_seq", sequenceName = "test_question_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_question_id_seq")
-    private long id;
+    private int id;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "test_id")
