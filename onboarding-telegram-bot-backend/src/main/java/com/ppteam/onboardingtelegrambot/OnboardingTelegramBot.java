@@ -92,6 +92,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         if (receivedMessage.split(" ").length > 1) {
             command = receivedMessage.split(" ")[0];
         }
+        if (!command.equals(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID) && hasActiveTestSession(userId)) {
+            sendText(chatId, "Пожалуйста, завершите тест, прежде чем использовать меню");
+            return;
+        }
         switch (command) {
             case CallbackQueryCommand.START:
                 startBot(chatId);
@@ -191,6 +195,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
+    private boolean hasActiveTestSession(long userId) {
+        return testSessionRepository.findByUserId(userId).isPresent();
+    }
+
     private void beginTestById(long chatId, long userId, int testId) {
         TestSession session = new TestSession();
         session.setUserId(userId);
@@ -202,7 +210,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private void sendTestQuestion(long chatId, long userId, int questionId, int answerId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        TestSession session = testSessionRepository.findByUserId(userId);
+        TestSession session = testSessionRepository.findByUserId(userId).orElseThrow();
         Test test = testRepository.findById(session.getTestId());
         Set<TestQuestion> questions = test.getQuestions();
         Set<TestSessionPassedQuestion> passedQuestions = session.getPassedQuestions();
