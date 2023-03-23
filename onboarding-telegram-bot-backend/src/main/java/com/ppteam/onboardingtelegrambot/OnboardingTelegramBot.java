@@ -211,19 +211,13 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                     passedQuestion.setQuestionId(question.getId());
                     passedQuestion.setTestSession(session);
                     testSessionPassedQuestionRepository.save(passedQuestion);
-                    //Set<TestSessionPassedQuestion> newPassedQuestions = new HashSet<>(passedQuestions);
-                    //newPassedQuestions.add(passedQuestion);
-                    //session.setPassedQuestions(newPassedQuestions);
-                    //session.getPassedQuestions().add(passedQuestion);
                     message.setText(question.getQuestion());
-                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers()));
-                    //testSessionRepository.save(session);
+                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers(), question.getCorrectAnswer()));
                     break;
                 }
             }
         } else {
             message.setText("Ваш счет: " + session.getScore());
-            //testSessionPassedQuestionRepository.deleteByTestSessionId(session.getId());
             testSessionRepository.delete(session);
         }
         executeMessageWithLogging(message);

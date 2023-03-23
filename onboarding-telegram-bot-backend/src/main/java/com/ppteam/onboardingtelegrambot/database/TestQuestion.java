@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -32,4 +30,7 @@ public class TestQuestion {
     private String question;
     @OneToMany(mappedBy = "testQuestion")
     private Set<TestAnswer> answers = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "correct_answer_id", referencedColumnName = "id")
+    private TestAnswer correctAnswer;
 }

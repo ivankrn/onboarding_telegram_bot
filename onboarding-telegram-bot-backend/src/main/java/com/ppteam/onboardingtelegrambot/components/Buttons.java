@@ -94,11 +94,11 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers) {
+    public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers, TestAnswer correctAnswer) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         for (TestAnswer answer : answers) {
             InlineKeyboardButton button = new InlineKeyboardButton(answer.getAnswer());
-            if (answer.isTrue()) {
+            if (answer == correctAnswer) {
                 button.setCallbackData(CallbackQueryCommand.CHOOSE_CORRECT_ANSWER);
             } else {
                 button.setCallbackData(CallbackQueryCommand.CHOOSE_INCORRECT_ANSWER);

@@ -25,7 +25,4 @@ public class TestAnswer {
     @NotBlank
     @Column(nullable = false)
     private String answer;
-    @NotNull
-    @Column(name = "is_true")
-    private boolean isTrue;
 }
