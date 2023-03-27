@@ -1,8 +1,9 @@
 package com.ppteam.onboardingtelegrambot.database;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,14 +22,15 @@ public class TestQuestion {
     @SequenceGenerator(name = "test_question_id_seq", sequenceName = "test_question_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_question_id_seq")
     private long id;
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "test_id")
+    @JoinColumn(name = "test_id", nullable = false)
+    @JsonBackReference(value = "test-questions")
     private Test test;
     @NotBlank
     @Column(nullable = false)
     private String question;
     @OneToMany(mappedBy = "testQuestion")
+    @JsonManagedReference(value = "test-answers")
     private Set<TestAnswer> answers = new HashSet<>();
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "correct_answer_id", referencedColumnName = "id")

@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.database;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,9 @@ public class TestAnswer {
     @SequenceGenerator(name = "test_answer_id_seq", sequenceName = "test_answer_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_answer_id_seq")
     private long id;
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "test_question_id")
+    @JsonBackReference(value = "test-answers")
     private TestQuestion testQuestion;
     @NotBlank
     @Column(nullable = false)
