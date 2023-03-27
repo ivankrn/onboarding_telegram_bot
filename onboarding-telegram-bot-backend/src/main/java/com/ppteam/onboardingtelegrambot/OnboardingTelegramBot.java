@@ -184,7 +184,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         if (article.getTestLink() != null && !article.getTestLink().isBlank()) {
             sb.append("\uD83D\uDCDD Ссылка на тест:\n" + article.getTestLink() + "\n\n");
         }
-        sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedOn().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE));
         return sb.toString();
     }
 
@@ -208,8 +208,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     }
 
     private void sendTestQuestion(long chatId, long userId, int questionId, int answerId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
         TestSession session = testSessionRepository.findByUserId(userId).orElseThrow();
         Test test = testRepository.findById(session.getTestId());
         Set<TestQuestion> questions = test.getQuestions();
@@ -222,8 +220,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                     testSessionRepository.save(session);
                 }
             } else {
-                message.setText("Пожалуйста, выберите ответ на текущий вопрос");
-                executeMessageWithLogging(message);
+                sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
                 return;
             }
             TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
@@ -232,6 +229,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             testSessionPassedQuestionRepository.save(passedQuestion);
             passedQuestions.add(passedQuestion);
         }
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
         if (passedQuestions.size() < questions.size()) {
             for (TestQuestion question : questions) {
                 if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == question.getId())) {

@@ -19,7 +19,7 @@ public class TestSession {
     @Id
     @SequenceGenerator(name = "test_session_id_seq", sequenceName = "test_session_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_session_id_seq")
-    private int id;
+    private long id;
     @NotNull
     @Column(name = "user_id")
     private long userId;

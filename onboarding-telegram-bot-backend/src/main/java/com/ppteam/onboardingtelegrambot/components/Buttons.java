@@ -94,7 +94,7 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers, int questionId) {
+    public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers, long questionId) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         for (TestAnswer answer : answers) {
             InlineKeyboardButton button = new InlineKeyboardButton(answer.getAnswer());

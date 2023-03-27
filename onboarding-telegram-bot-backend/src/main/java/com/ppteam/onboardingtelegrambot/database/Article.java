@@ -29,6 +29,6 @@ public class Article extends Material {
     private String usefulLinks;
     @Column(name = "test_link")
     private String testLink;
-    @Column(name = "created_on", nullable = false, insertable = false, updatable = false)
-    private OffsetDateTime createdOn;
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime createdAt;
 }
