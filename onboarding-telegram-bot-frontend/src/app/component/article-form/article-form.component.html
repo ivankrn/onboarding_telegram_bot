@@ -12,10 +12,10 @@
         </div>
         <div [hidden]="article.title && article.title.length != 0" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
         <span>Тема</span>
-        <select class="form-select" [(ngModel)]="article.topicId" #topic="ngModel" name="topicId">
+        <select class="form-select" [(ngModel)]="article.topic.id" #topic="ngModel" name="topicId">
           <option *ngFor="let topic of articleTopics | async | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
         </select>
-        <div [hidden]="article.topicId && article.topicId != 0" class="alert alert-danger">Тема статьи не может быть пустой</div>
+        <div [hidden]="article.topic.id && article.topic.id != 0" class="alert alert-danger">Тема статьи не может быть пустой</div>
         <div class="form-group">
           <label for="content">Текст</label>
           <input type="text" [(ngModel)]="article.content" 

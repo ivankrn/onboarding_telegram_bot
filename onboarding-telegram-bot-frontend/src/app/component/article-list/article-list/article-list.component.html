@@ -1,11 +1,3 @@
-<div class="col-4">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{ this.articlesTotalCount }}</h5>
-      <p class="card-text font-monospace lead">всего статей</p>
-    </div>
-  </div>
-</div>
 <div class="col-11 my-5">
   <h2>Список статей</h2>
       <table class="table table-bordered table-striped">
@@ -23,12 +15,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let article of articles">
-            <td>{{ (articleTopics | async)?.get(article.topicId) }}</td>
+            <td>{{ (articleTopics | async)?.get(article.topic.id) }}</td>
             <td>{{ article.title }}</td>
             <td>{{ article.content }}</td>
             <td>{{ article.usefulLinks }}</td>
             <td>{{ article.testLink }}</td>
-            <td>{{ article.createdOn | date:'d-MM-y' }}</td>
+            <td>{{ article.createdAt | date:'d-MM-y' }}</td>
             <td><button class="btn btn-danger" (click)="onDelete(article)">x</button></td>
             <td>
               <button routerLink='/article' [state]="article" class="btn btn-info">

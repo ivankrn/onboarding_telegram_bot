@@ -8,12 +8,16 @@ import { ArticleListComponent } from './component/article-list/article-list/arti
 import { ArticleFormComponent } from './component/article-form/article-form.component';
 import { ArticleService } from './service/article.service';
 import { HttpClientModule } from '@angular/common/http';
+import { TestListComponent } from './component/test-list/test-list/test-list.component';
+import { DashboardComponent } from './component/dashboard/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ArticleListComponent,
     ArticleFormComponent,
+    TestListComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
