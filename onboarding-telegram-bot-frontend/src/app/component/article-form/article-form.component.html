@@ -1,54 +1,32 @@
 <div class="card my-5">
-    <div class="card-body">
-      <form (ngSubmit)="onSubmit()" #articleForm="ngForm">
-        <div class="form-group">
-          <label for="title">Заголовок</label>
-          <input type="text" [(ngModel)]="article.title" 
-            class="form-control" 
-            id="title" 
-            name="title" 
-            placeholder="Введите заголовок статьи"
-            required #title="ngModel">
-        </div>
-        <div [hidden]="article.title && article.title.length != 0" class="alert alert-danger">Заголовок статьи не может быть пустым</div>
-        <span>Тема</span>
-        <select class="form-select" [(ngModel)]="article.topic.id" #topic="ngModel" name="topicId">
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="title">Заголовок:</label>
+        <input id="title" type="text" formControlName="title" class="form-control">
+      </div>
+      <div class="form-group" formGroupName="topic">
+        <label for="id">Тема:</label>
+        <select class="form-select" formControlName="id">
           <option *ngFor="let topic of articleTopics | async | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
         </select>
-        <div [hidden]="article.topic.id && article.topic.id != 0" class="alert alert-danger">Тема статьи не может быть пустой</div>
-        <div class="form-group">
-          <label for="content">Текст</label>
-          <input type="text" [(ngModel)]="article.content" 
-            class="form-control" 
-            id="content" 
-            name="content" 
-            placeholder="Введите текст статьи"
-            required #content="ngModel">
-          <div [hidden]="article.content && article.content.length != 0" class="alert alert-danger">Текст статьи не может быть пустым</div>
-        </div>
-        <div class="form-group">
-            <label for="usefulLinks">Полезные ссылки</label>
-            <input type="text" [(ngModel)]="article.usefulLinks" 
-              class="form-control" 
-              id="usefulLinks" 
-              name="usefulLinks" 
-              placeholder="Введите полезные ссылки"
-              #usefulLinks="ngModel">
-        </div>
-        <div class="form-group">
-            <label for="testLink">Ссылка на тест</label>
-            <input type="text" [(ngModel)]="article.testLink" 
-              class="form-control" 
-              id="testLink" 
-              name="testLink" 
-              placeholder="Введите ссылку на тест"
-              #testLink="ngModel">
-        </div>
-        <div class="form-group text-end mt-3">
-          <button routerLink="/articles" type="button" class="btn btn-danger mr-auto">Отмена</button>
-          <button type="submit" [disabled]="!articleForm.form.valid" class="btn btn-success">OK</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="form-group">
+        <label for="content">Текст:</label>
+        <input id="content" type="text" formControlName="content" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="usefulLinks">Полезные ссылки:</label>
+        <input id="usefulLinks" type="text" formControlName="usefulLinks" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="testLink">Ссылка на тест:</label>
+        <input id="testLink" type="text" formControlName="testLink" class="form-control">
+      </div>
+      <div class="form-group text-end mt-3">
+        <button routerLink="/articles" type="button" class="btn btn-danger mr-auto">Отмена</button>
+        <button type="submit" [disabled]="!form.valid" class="btn btn-success">OK</button>
+      </div>
+    </form>
   </div>
-  
+</div>
