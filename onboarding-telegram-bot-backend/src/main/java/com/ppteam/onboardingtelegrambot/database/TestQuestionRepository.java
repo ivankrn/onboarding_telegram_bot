@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface TestQuestionRepository extends CrudRepository<TestQuestion, Long> {
     @EntityGraph(attributePaths = {"answers"})
-    List<TestQuestion> findByTestId(int testId);
+    List<TestQuestion> findByTestId(long testId);
 }

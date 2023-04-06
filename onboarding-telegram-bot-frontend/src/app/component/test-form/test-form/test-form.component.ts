@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { Test } from 'src/app/model/test';
+import { TestQuestion } from 'src/app/model/test-question';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
 import { TestService } from 'src/app/service/test.service';
@@ -34,15 +35,38 @@ export class TestFormComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.pipe(map(() => window.history.state)).subscribe(data => {
+      console.log(data);
       this.test = data;
       this.form.patchValue(data);
+      // data.questions.forEach((q: { [x: string]: any; }) => {
+      //   const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
+      //     answer: new FormControl(ans["answer"], Validators.required),
+      //     correct: new FormControl(ans["correct"])
+      //   }));
+      //   this.questions.push(new FormGroup({
+      //     question: new FormControl(q["question"], Validators.required),
+      //     answers: new FormArray(questionAnswers)
+      //   }));
+      // });
+      data.questions.forEach((q: { [x: string]: any; }) => {
+        const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
+          id: new FormControl(ans["id"]),
+          answer: new FormControl(ans["answer"], Validators.required),
+          correct: new FormControl(ans["correct"])
+        }));
+        this.questions.push(new FormGroup({
+          id: new FormControl(q["id"]),
+          question: new FormControl(q["question"], Validators.required),
+          answers: new FormArray(questionAnswers)
+        }));
+      });
     });
   }
 
   public onSubmit() {
     console.log(this.form.value);
-    // this.test = Object.assign(this.test, this.form.value);
-    // this.testService.save(this.test).subscribe(() => this.goToTestList());
+    this.test = Object.assign(this.test, this.form.value);
+    this.testService.save(this.test).subscribe(() => this.goToTestList());
   }
 
   public goToTestList() {
@@ -64,16 +88,14 @@ export class TestFormComponent implements OnInit {
   addQuestion() {
     this.questions.push(new FormGroup({
       question: new FormControl("", Validators.required),
-      answers: new FormArray([]),
-      correctAnswer: new FormControl(null, Validators.required)
+      answers: new FormArray([])
     }));
-    console.log(this.form.value);
   }
 
   addAnswerToId(questionId: number) {
     this.getAnswersByQuestionId(questionId).push(new FormGroup({
-      answer: new FormControl("", Validators.required)
+      answer: new FormControl("", Validators.required),
+      correct: new FormControl(false)
     }));
-    console.log(this.form.value);
   }
 }

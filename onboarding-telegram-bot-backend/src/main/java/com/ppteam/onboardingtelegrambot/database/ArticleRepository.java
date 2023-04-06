@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleRepository extends PagingAndSortingRepository<Article, Long>, CrudRepository<Article, Long> {
-    Page<Article> findByTopicId(int topicId, Pageable pageable);
-    Article findById(int articleId);
+    Page<Article> findByTopicId(long topicId, Pageable pageable);
 }

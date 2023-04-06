@@ -1,7 +1,7 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.database.Article;
-import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
+import com.ppteam.onboardingtelegrambot.service.ArticleService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,35 +14,35 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ArticleController {
 
-    private final ArticleRepository articleRepository;
+    private final ArticleService articleService;
 
-    public ArticleController(ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
     }
 
     @GetMapping
     public List<Article> getArticles() {
         Pageable page = PageRequest.of(0, 10);
-        return articleRepository.findAll(page).getContent();
+        return articleService.findAll(page).getContent();
     }
 
     @GetMapping("/count")
     public long getArticleCount() {
-        return articleRepository.count();
+        return articleService.count();
     }
 
     @GetMapping("/{id}")
-    public Article getArticle(@PathVariable int id) {
-        return articleRepository.findById(id);
+    public Article getArticle(@PathVariable long id) {
+        return articleService.findById(id);
     }
 
     @PostMapping
     public void saveArticle(@RequestBody @Valid Article article) {
-        articleRepository.save(article);
+        articleService.save(article);
     }
 
     @DeleteMapping("/{id}")
     public void deleteArticle(@PathVariable long id) {
-        articleRepository.deleteById(id);
+        articleService.deleteById(id);
     }
 }

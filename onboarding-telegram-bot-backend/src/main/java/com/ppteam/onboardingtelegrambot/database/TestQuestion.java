@@ -29,10 +29,7 @@ public class TestQuestion {
     @NotBlank
     @Column(nullable = false)
     private String question;
-    @OneToMany(mappedBy = "testQuestion")
+    @OneToMany(mappedBy = "testQuestion", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "test-answers")
     private Set<TestAnswer> answers = new HashSet<>();
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "correct_answer_id", referencedColumnName = "id")
-    private TestAnswer correctAnswer;
 }

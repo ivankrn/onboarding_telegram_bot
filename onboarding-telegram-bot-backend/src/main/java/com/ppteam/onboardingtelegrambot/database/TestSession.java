@@ -25,7 +25,7 @@ public class TestSession {
     private long userId;
     @NotNull
     @Column(name = "test_id")
-    private int testId;
+    private long testId;
     @NotNull
     @Column
     private int score;

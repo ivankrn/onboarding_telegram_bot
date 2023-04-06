@@ -40,10 +40,8 @@ public class Test extends Material {
     @Column(nullable = false)
     @NotBlank
     private String title;
-    @Column(nullable = false)
-    @NotBlank
     private String description;
-    @OneToMany(mappedBy = "test")
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "test-questions")
     private Set<TestQuestion> questions = new HashSet<>();
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)

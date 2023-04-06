@@ -20,10 +20,13 @@ public class TestAnswer {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_answer_id_seq")
     private long id;
     @ManyToOne
-    @JoinColumn(name = "test_question_id")
+    @JoinColumn(name = "test_question_id", nullable = false)
     @JsonBackReference(value = "test-answers")
     private TestQuestion testQuestion;
     @NotBlank
     @Column(nullable = false)
     private String answer;
+    @NotNull
+    @Column(name = "is_correct")
+    private boolean isCorrect;
 }

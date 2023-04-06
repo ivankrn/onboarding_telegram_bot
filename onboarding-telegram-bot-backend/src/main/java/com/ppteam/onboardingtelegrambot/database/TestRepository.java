@@ -7,6 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TestRepository extends PagingAndSortingRepository<Test, Long>, CrudRepository<Test, Long> {
     Page<Test> findByTopicId(int topicId, Pageable page);
@@ -14,6 +16,7 @@ public interface TestRepository extends PagingAndSortingRepository<Test, Long>, 
 //            value = "test-entity-graph-with-questions-answers",
 //            type = EntityGraph.EntityGraphType.LOAD
 //    )
+
     @EntityGraph(attributePaths = {"questions", "questions.answers"})
-    Test findById(int id);
+    Optional<Test> findById(long id);
 }

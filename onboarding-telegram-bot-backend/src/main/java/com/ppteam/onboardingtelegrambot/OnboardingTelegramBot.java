@@ -4,6 +4,7 @@ import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
 import com.ppteam.onboardingtelegrambot.database.*;
+import com.ppteam.onboardingtelegrambot.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,6 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -28,17 +28,19 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticleService articleService;
     @Autowired
-    private TestRepository testRepository;
+    private TestService testService;
     @Autowired
-    private TestQuestionRepository testQuestionRepository;
+    private TestQuestionService testQuestionService;
     @Autowired
-    private TestSessionRepository testSessionRepository;
+    private TestAnswerService testAnswerService;
     @Autowired
-    private TestSessionPassedQuestionRepository testSessionPassedQuestionRepository;
+    private TestSessionService testSessionService;
     @Autowired
-    private ArticleTopicRepository articleTopicRepository;
+    private TestSessionPassedQuestionService testSessionPassedQuestionService;
+    @Autowired
+    private ArticleTopicService articleTopicService;
 
     public OnboardingTelegramBot(BotConfig botConfig) {
         this.botConfig = botConfig;
@@ -139,7 +141,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private void sendTopicChoiceMenu(long chatId, int pageNumber, boolean isTestBrowsingMode) {
         Pageable page = PageRequest.of(pageNumber, 10);
-        Page<ArticleTopic> articleTopics = articleTopicRepository.findAll(page);
+        Page<ArticleTopic> articleTopics = articleTopicService.findAll(page);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберите тему:");
@@ -157,17 +159,17 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             message.setText("Выберите статью:");
         }
         if (isTestBrowsingMode) {
-            Page<Test> tests = testRepository.findByTopicId(topicId, page);
+            Page<Test> tests = testService.findByTopicId(topicId, page);
             message.setReplyMarkup(Buttons.materialChoiceMarkup(tests, topicId, isTestBrowsingMode));
         } else {
-            Page<Article> articles = articleRepository.findByTopicId(topicId, page);
+            Page<Article> articles = articleService.findByTopicId(topicId, page);
             message.setReplyMarkup(Buttons.materialChoiceMarkup(articles, topicId, isTestBrowsingMode));
         }
         executeMessageWithLogging(message);
     }
 
     private void sendArticleById(long chatId, int articleId) {
-        Article article = articleRepository.findById(articleId);
+        Article article = articleService.findById(articleId);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(formatArticle(article));
@@ -196,37 +198,37 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     }
 
     private boolean hasActiveTestSession(long userId) {
-        return testSessionRepository.findByUserId(userId).isPresent();
+        return testSessionService.hasActiveTestSession(userId);
     }
 
     private void beginTestById(long chatId, long userId, int testId) {
         TestSession session = new TestSession();
         session.setUserId(userId);
         session.setTestId(testId);
-        testSessionRepository.save(session);
+        testSessionService.save(session);
         sendTestQuestion(chatId, userId, -1, -1);
     }
 
     private void sendTestQuestion(long chatId, long userId, int questionId, int answerId) {
-        TestSession session = testSessionRepository.findByUserId(userId).orElseThrow();
-        Test test = testRepository.findById(session.getTestId());
+        TestSession session = testSessionService.findByUserId(userId);
+        Test test = testService.findById(session.getTestId());
         Set<TestQuestion> questions = test.getQuestions();
         Set<TestSessionPassedQuestion> passedQuestions = session.getPassedQuestions();
-        Optional<TestQuestion> previousQuestion = testQuestionRepository.findById((long)questionId);
-        if (previousQuestion.isPresent()) {
+        if (this.testQuestionService.exists(questionId)) {
+            TestQuestion previousQuestion = testQuestionService.findById(questionId);
             if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == questionId)) {
-                if (previousQuestion.get().getCorrectAnswer().getId() == answerId) {
-                    session.setScore(session.getScore() + 1);
-                    testSessionRepository.save(session);
+                TestAnswer correctAnswer = testAnswerService.getCorrectAnswerForQuestionId(previousQuestion.getId());
+                if (correctAnswer.getId() == answerId) {
+                    testSessionService.increaseScore(session);
                 }
             } else {
                 sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
                 return;
             }
             TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
-            passedQuestion.setQuestionId(previousQuestion.get().getId());
+            passedQuestion.setQuestionId(previousQuestion.getId());
             passedQuestion.setTestSession(session);
-            testSessionPassedQuestionRepository.save(passedQuestion);
+            testSessionPassedQuestionService.save(passedQuestion);
             passedQuestions.add(passedQuestion);
         }
         SendMessage message = new SendMessage();
@@ -241,7 +243,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             }
         } else {
             message.setText("Ваш счет: " + session.getScore());
-            testSessionRepository.delete(session);
+            testSessionService.delete(session);
         }
         executeMessageWithLogging(message);
     }

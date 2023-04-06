@@ -4,4 +4,5 @@ export class TestAnswer {
     id: number;
     testQuestion: TestQuestion;
     answer: string;
+    isCorrect: boolean;
 }

@@ -6,5 +6,4 @@ export class TestQuestion {
     test: Test;
     question: string;
     answers: TestAnswer[];
-    correctAnswer: TestAnswer;
 }
