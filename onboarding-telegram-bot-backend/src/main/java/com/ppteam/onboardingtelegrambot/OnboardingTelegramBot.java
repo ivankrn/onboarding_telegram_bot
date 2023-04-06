@@ -94,7 +94,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         if (receivedMessage.split(" ").length > 1) {
             command = receivedMessage.split(" ")[0];
         }
-        if (!command.equals(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID) && hasActiveTestSession(userId)) {
+        if (!command.equals(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID)
+                && this.testSessionService.hasActiveTestSession(userId)) {
             sendText(chatId, "Пожалуйста, завершите тест, прежде чем использовать меню");
             return;
         }

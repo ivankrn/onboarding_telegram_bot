@@ -16,16 +16,6 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "questions")
 @ToString(exclude = "questions")
 @Table(name = "test")
-//@NamedEntityGraph(
-//        name = "test-entity-graph-with-questions-answers",
-//        attributeNodes = @NamedAttributeNode("questions"),
-//        subgraphs = {
-//                @NamedSubgraph(
-//                        name = "questions-subgraph",
-//                        attributeNodes = @NamedAttributeNode("answers")
-//                )
-//        }
-//)
 public class Test extends Material {
     @Id
     @SequenceGenerator(name = "test_id_seq", sequenceName = "test_id_seq", allocationSize = 1)
@@ -41,7 +31,7 @@ public class Test extends Material {
     @NotBlank
     private String title;
     private String description;
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "test-questions")
     private Set<TestQuestion> questions = new HashSet<>();
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)

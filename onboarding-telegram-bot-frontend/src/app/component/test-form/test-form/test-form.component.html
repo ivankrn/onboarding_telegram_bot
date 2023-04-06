@@ -19,6 +19,7 @@
             <div class="form-group" formArrayName="questions">
                 <ul class="list-group" *ngFor="let question of questions.controls; let questionIndex=index">
                     <li class="list-group-item my-3 ms-5" [formGroupName]="questionIndex">
+                        <button type="button" class="btn float-end" (click)="deleteQuestionById(questionIndex)">X</button>
                         <p class="lead">Вопрос {{ questionIndex + 1 }}</p>
                         <div class="form-group">
                             <label>Название вопроса:</label>
@@ -29,28 +30,19 @@
                             <ul class="list-group" *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let answerIndex=index">
                                 <li class="list-group-item my-3" [formGroupName]="answerIndex">
                                     <label for="answer">Ответ:</label>
+                                    <button type="button" class="btn float-end" (click)="deleteAnswerById(questionIndex, answerIndex)">X</button>
                                     <input id="answer" type="text" formControlName="answer" class="form-control">
-                                    <label for="correct" class="form-check-label">Правильный ответ?</label>
-                                    <input class="form-check-input" type="checkbox" formControlName="correct">
+                                    <div class="div my-3">
+                                        <label for="correct" class="form-check-label">Правильный ответ?</label>
+                                        <input class="form-check-input ml-3" type="checkbox" formControlName="correct">
+                                    </div>
                                 </li>
                             </ul>
                             <button type="button" (click)="addAnswerToId(questionIndex)" class="btn btn-success">Добавить ответ</button>
                         </div>
-                        <!-- <div class="form-group">
-                            <p>Правильный ответ на вопрос:</p>
-                            <select class="form-select" formControlName="correctAnswer">
-                                <option *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let i=index" [ngValue]="i">
-                                    {{ answer.get("answer")?.value }}
-                                </option>
-                            </select>
-                        </div> -->
                     </li>
                 </ul>
                 <button type="button" (click)="addQuestion()" class="btn btn-success my-3">Добавить вопрос</button>
-                <!-- <div *ngFor="let question of questions.controls; let i=index">
-                    <label for="question-{{ i }}">Вопрос:</label>
-
-                </div> -->
             </div>
             <div class="form-group text-end mt-3">
                 <button routerLink="/tests" type="button" class="btn btn-danger mr-auto">Отмена</button>
