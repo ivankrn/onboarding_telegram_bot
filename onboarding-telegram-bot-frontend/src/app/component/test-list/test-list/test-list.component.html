@@ -28,5 +28,13 @@
         </tr>
         </tbody>
     </table>
+    <div *ngIf="tests">
+        <pagination
+            [currentPage]="currentPage + 1"
+            [limit]="showLimit"
+            [total]="totalElements"
+            (changePage)="changePage($event)">
+        </pagination>
+    </div>
     <button routerLink="/test" type="submit" class="btn btn-info">Добавить тест</button>
 </div>

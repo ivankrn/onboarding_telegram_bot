@@ -3,11 +3,10 @@ package com.ppteam.onboardingtelegrambot.controller;
 import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.service.ArticleService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -21,9 +20,9 @@ public class ArticleController {
     }
 
     @GetMapping
-    public List<Article> getArticles() {
-        Pageable page = PageRequest.of(0, 10);
-        return articleService.findAll(page).getContent();
+    public Page<Article> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable paging = PageRequest.of(page, size);
+        return articleService.findAll(paging);
     }
 
     @GetMapping("/count")

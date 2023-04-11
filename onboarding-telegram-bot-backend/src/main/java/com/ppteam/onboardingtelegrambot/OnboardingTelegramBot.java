@@ -198,10 +198,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private boolean hasActiveTestSession(long userId) {
-        return testSessionService.hasActiveTestSession(userId);
-    }
-
     private void beginTestById(long chatId, long userId, int testId) {
         TestSession session = new TestSession();
         session.setUserId(userId);

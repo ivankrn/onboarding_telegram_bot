@@ -11,39 +11,40 @@ import { ArticleService } from 'src/app/service/article.service';
 })
 export class ArticleListComponent implements OnInit {
 
-  articlesTotalCount: number;
+  currentPage: number = 0;
+  totalElements: number = 0;
+  showLimit: number = 10;
+
   articles: Article[];
   articleTopics: Observable<Map<number, string>>;
 
   constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) {}
 
   ngOnInit() {
-    this.updateArticlesTotalCount();
-    this.updateList();
+    this.updateList({page: this.currentPage, size: this.showLimit});
     this.updateTopics();
   }
 
   onDelete(article: Article) {
     this.articleService.delete(article.id).subscribe(() => {
-      this.updateArticlesTotalCount();
-      this.updateList();
+      this.articles = this.articles.filter(item => item.id !== article.id);
     });
   }
 
-  updateArticlesTotalCount() {
-    this.articleService.count().subscribe(data => {
-      this.articlesTotalCount = data;
-    });
-  }
-
-  updateList() {
-    this.articleService.findAll().subscribe(data => {
-      this.articles = data;
+  updateList(request: any) {
+    this.articleService.findAll(request).subscribe(data => {
+      this.articles = data["content"];
+      this.totalElements = data["totalElements"];
     });
   }
 
   updateTopics() {
     this.articleTopics = this.articleTopicService.getTopicsNames();
+  }
+
+  changePage(pageNumber: number) {
+    this.currentPage = pageNumber - 1;
+    this.updateList({page: this.currentPage, size: this.showLimit});
   }
 
 }

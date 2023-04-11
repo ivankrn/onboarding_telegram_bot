@@ -11,6 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { TestListComponent } from './component/test-list/test-list/test-list.component';
 import { DashboardComponent } from './component/dashboard/dashboard/dashboard.component';
 import { TestFormComponent } from './component/test-form/test-form/test-form.component';
+import { PaginationModule } from './pagination/pagination/pagination.module';
+import { TestService } from './service/test.service';
 
 @NgModule({
   declarations: [
@@ -25,9 +27,10 @@ import { TestFormComponent } from './component/test-form/test-form/test-form.com
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PaginationModule
   ],
-  providers: [ArticleService],
+  providers: [ArticleService, TestService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

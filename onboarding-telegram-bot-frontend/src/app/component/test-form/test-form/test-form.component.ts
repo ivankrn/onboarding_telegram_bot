@@ -35,19 +35,8 @@ export class TestFormComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.pipe(map(() => window.history.state)).subscribe(data => {
-      console.log(data);
       this.test = data;
       this.form.patchValue(data);
-      // data.questions.forEach((q: { [x: string]: any; }) => {
-      //   const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
-      //     answer: new FormControl(ans["answer"], Validators.required),
-      //     correct: new FormControl(ans["correct"])
-      //   }));
-      //   this.questions.push(new FormGroup({
-      //     question: new FormControl(q["question"], Validators.required),
-      //     answers: new FormArray(questionAnswers)
-      //   }));
-      // });
       data.questions.forEach((q: { [x: string]: any; }) => {
         const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
           id: new FormControl(ans["id"]),
@@ -66,6 +55,7 @@ export class TestFormComponent implements OnInit {
   public onSubmit() {
     console.log(this.form.value);
     this.test = Object.assign(this.test, this.form.value);
+    console.log(this.test);
     this.testService.save(this.test).subscribe(() => this.goToTestList());
   }
 
@@ -92,10 +82,18 @@ export class TestFormComponent implements OnInit {
     }));
   }
 
+  deleteQuestionById(questionId: number) {
+    this.questions.removeAt(questionId);
+  }
+
   addAnswerToId(questionId: number) {
     this.getAnswersByQuestionId(questionId).push(new FormGroup({
       answer: new FormControl("", Validators.required),
       correct: new FormControl(false)
     }));
+  }
+
+  deleteAnswerById(questionId: number, answerId: number) {
+    this.getAnswersByQuestionId(questionId).removeAt(answerId);
   }
 }

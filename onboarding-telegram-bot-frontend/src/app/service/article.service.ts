@@ -12,8 +12,8 @@ export class ArticleService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public findAll(): Observable<Article[]> {
-    return this.httpClient.get<Article[]>(this.apiUrl);
+  public findAll(params: any): Observable<any> {
+    return this.httpClient.get(this.apiUrl, {params});
   }
 
   public count(): Observable<number> {

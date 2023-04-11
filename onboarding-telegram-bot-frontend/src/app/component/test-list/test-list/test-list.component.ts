@@ -9,23 +9,32 @@ import { TestService } from 'src/app/service/test.service';
 })
 export class TestListComponent implements OnInit {
 
+  currentPage: number = 0;
+  totalElements: number = 0;
+  showLimit: number = 10;
   tests: Test[];
 
   constructor(private testService: TestService) { }
 
   ngOnInit(): void {
-    this.updateList();
+    this.updateList({page: this.currentPage, size: this.showLimit});
   }
 
-  updateList() {
-    this.testService.findAll().subscribe(data => {
-      this.tests = data;
+  updateList(request: any) {
+    this.testService.findAll(request).subscribe(data => {
+      this.tests = data["content"];
+      this.totalElements = data["totalElements"];
     });
   }
 
   onDelete(test: Test) {
     this.testService.delete(test.id).subscribe(() => {
-      this.updateList();
+      this.tests = this.tests.filter(item => item.id !== test.id);
     });
+  }
+
+  changePage(pageNumber: number) {
+    this.currentPage = pageNumber - 1;
+    this.updateList({page: this.currentPage, size: this.showLimit});
   }
 }
