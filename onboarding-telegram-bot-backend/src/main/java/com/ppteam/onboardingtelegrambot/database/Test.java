@@ -24,9 +24,6 @@ public class Test extends Material {
     @ManyToOne
     @JoinColumn(name = "topic_id", nullable = false)
     private ArticleTopic topic;
-    @ManyToOne
-    @JoinColumn(name = "article_id")
-    private Article article;
     @Column(nullable = false)
     @NotBlank
     private String title;

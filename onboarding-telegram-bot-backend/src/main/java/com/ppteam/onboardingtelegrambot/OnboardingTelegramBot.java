@@ -169,11 +169,14 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void sendArticleById(long chatId, int articleId) {
+    private void sendArticleById(long chatId, long articleId) {
         Article article = articleService.findById(articleId);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(formatArticle(article));
+        if (article.getTest() != null) {
+            message.setReplyMarkup(Buttons.articleWithAttachedTestMarkup(article));
+        }
         executeMessageWithLogging(message);
     }
 
@@ -184,10 +187,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         if (article.getUsefulLinks() != null && !article.getUsefulLinks().isBlank()) {
             sb.append("\uD83D\uDCD5 Полезные ссылки:\n" + article.getUsefulLinks() + "\n\n");
         }
-        if (article.getTestLink() != null && !article.getTestLink().isBlank()) {
-            sb.append("\uD83D\uDCDD Ссылка на тест:\n" + article.getTestLink() + "\n\n");
+        sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n\n");
+        if (article.getTest() != null) {
+            sb.append("\uD83D\uDCDD Для данной статьи доступен тест, не желаете пройти его?");
         }
-        sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE));
         return sb.toString();
     }
 

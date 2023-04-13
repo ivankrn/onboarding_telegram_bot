@@ -19,9 +19,12 @@
         <label for="usefulLinks">Полезные ссылки:</label>
         <input id="usefulLinks" type="text" formControlName="usefulLinks" class="form-control">
       </div>
-      <div class="form-group">
-        <label for="testLink">Ссылка на тест:</label>
-        <input id="testLink" type="text" formControlName="testLink" class="form-control">
+      <div class="form-group" formGroupName="test">
+        <label for="id">Тест:</label>
+        <select class="form-select" formControlName="id">
+          <option [ngValue]="null">-</option>
+          <option *ngFor="let test of tests | async | keyvalue" [ngValue]="test.key">{{test.value}}</option>
+        </select>
       </div>
       <div class="form-group text-end mt-3">
         <button routerLink="/articles" type="button" class="btn btn-danger mr-auto">Отмена</button>

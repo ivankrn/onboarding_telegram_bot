@@ -1,4 +1,5 @@
 import { ArticleTopic } from "./article-topic";
+import { Test } from "./test";
 
 export class Article {
     id: number;
@@ -6,6 +7,6 @@ export class Article {
     title: string;
     content: string;
     usefulLinks: string;
-    testLink: string;
+    test?: Test;
     createdAt: Date;
 }

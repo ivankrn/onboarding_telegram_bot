@@ -7,7 +7,7 @@
             <th scope="col">Заголовок</th>
             <th scope="col">Текст</th>
             <th scope="col">Полезные ссылки</th>
-            <th scope="col">Ссылка на тест</th>
+            <th scope="col">Прикреплен тест</th>
             <th scope="col">Дата создания</th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -19,7 +19,8 @@
             <td>{{ article.title }}</td>
             <td>{{ article.content }}</td>
             <td>{{ article.usefulLinks }}</td>
-            <td>{{ article.testLink }}</td>
+            <td *ngIf="article.test">Да</td>
+            <td *ngIf="!article.test">Нет</td>
             <td>{{ article.createdAt | date:'d-MM-y' }}</td>
             <td><button class="btn btn-danger" (click)="onDelete(article)">x</button></td>
             <td>

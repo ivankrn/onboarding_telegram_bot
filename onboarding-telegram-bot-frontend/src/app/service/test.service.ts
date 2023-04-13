@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Test } from '../model/test';
 
 @Injectable({
@@ -26,5 +27,16 @@ export class TestService {
 
   public delete(id: number) {
     return this.httpClient.delete<Test>(this.apiUrl + '/' + id);
+  }
+
+  public getTestsNames() {
+    return this.findAll({}).pipe(map(testPage => {
+      let names: Map<number, string> = new Map();
+      const tests = testPage["content"];
+      tests.forEach((test: Test) => {
+        names.set(test.id, test.title)
+      });
+      return names;
+    }));
   }
 }

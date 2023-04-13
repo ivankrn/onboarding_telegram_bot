@@ -26,8 +26,9 @@ public class Article extends Material {
     private String content;
     @Column(name = "useful_links")
     private String usefulLinks;
-    @Column(name = "test_link")
-    private String testLink;
+    @OneToOne
+    @JoinColumn(name = "test_id")
+    private Test test;
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 }

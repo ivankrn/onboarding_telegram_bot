@@ -94,6 +94,15 @@ public class Buttons {
         return markup;
     }
 
+    public static InlineKeyboardMarkup articleWithAttachedTestMarkup(Article article) {
+        InlineKeyboardButton beginTestButton = new InlineKeyboardButton("Начать тест");
+        beginTestButton.setCallbackData(CallbackQueryCommand.BEGIN_TEST_BY_ID + " " + article.getTest().getId());
+        List<List<InlineKeyboardButton>> rows = List.of(List.of(beginTestButton));
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rows);
+        return markup;
+    }
+
     public static InlineKeyboardMarkup testAnswerChoiceMarkup(Set<TestAnswer> answers, long questionId) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         for (TestAnswer answer : answers) {
