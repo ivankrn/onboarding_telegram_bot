@@ -1,34 +1,64 @@
-.navbar-brand {
-    padding-top: .75rem;
-    padding-bottom: .75rem;
-    font-size: 1rem;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-  }
-  
-  .sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 100;
-    padding: 48px 0 0;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-  }
-  
-  .sidebar .nav-link {
-    font-weight: 500;
-    font-size: 1.1rem;
-    color: #333;
-  }
-  
-  .sidebar .nav-item.active {
-    background-color: rgba(0, 0, 0, .25);
-  }
-  
-  .sidebar .active .nav-link {
-    color: white;
-  }
-  
-  .sidebar .nav-link:hover {
-    color: orange;
-  }
+:root {
+  --main-bg-color: #009d63;
+  --main-text-color: #009d63;
+  --second-text-color: #bbbec5;
+  --second-bg-color: #c1efde;
+}
+
+.primary-text {
+  color: #009d63;
+}
+
+.second-text {
+  color: #bbbec5
+}
+
+.primary-bg {
+  background-color: #009d63;
+}
+
+.secondary-bg {
+  background-color: #c1efde;
+}
+
+.rounded-full {
+  border-radius: 100%;
+}
+
+#wrapper {
+  overflow-x: hidden;
+  background-image: linear-gradient(to right, #baf3d7, #c2f5de, #cbf7e4, #d4f8ea, #ddfaef);
+}
+
+#sidebar-wrapper {
+  min-height: 100vh;
+  transition: margin 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 0;
+  font-size: 1.2rem;
+  font-family: 'Muller';
+}
+
+#sidebar-wrapper .list-group {
+  width: 15rem;
+}
+
+#page-content-wrapper {
+  min-width: 0;
+  width: 125%;
+}
+
+.list-group-item {
+  border: none;
+  padding: 20px 30px;
+  font-family: 'Muller'
+}
+
+.list-group-item.active {
+  background-color: transparent;
+  color: #009d63;
+  font-weight: bold;
+  border: none;
+}

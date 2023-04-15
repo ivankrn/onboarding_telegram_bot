@@ -37,6 +37,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Fonts
+src/assets/fonts/*
+
 # System files
 .DS_Store
 Thumbs.db

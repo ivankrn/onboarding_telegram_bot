@@ -1,42 +1,26 @@
-<!-- <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card bg-dark my-5">
-        <div class="card-body">
-          <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
-          <ul class="text-center list-inline py-3">
-            <li class="list-inline-item">
-              <a routerLink="/articles" class="btn btn-info">Список статей</a>
-                </li>
-            <li class="list-inline-item">
-              <a routerLink="/addarticle" class="btn btn-info">Добавить статью</a>
-                </li>
-          </ul>
-        </div>
-      </div>
-      <router-outlet></router-outlet>
+<div class="d-flex" id="wrapper">
+  <div class="bg-white" id="sidebar-wrapper">
+    <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
+      <i class="fas fa-robot me-2"></i>{{title}}
+    </div>
+    <div class="list-group list-group-flush my-3">
+      <a routerLink="/statistics" routerLinkActive="active" class="list-group-item list-group-item-action bg-transparent second-text">
+        <i class="fas fa-chart-line me-2"></i>Статистика
+      </a>
+      <a routerLink="/articles" routerLinkActive="active" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+        <i class="fas fa-newspaper me-2"></i>Статьи
+      </a>
+      <a routerLink="/tests" routerLinkActive="active" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+        <i class="fas fa-note-sticky me-2"></i>Тесты
+      </a>
+      <!-- <a routerLink="/tests" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold">
+        <i class="fas fa-project-diagram me-2"></i>Выйти
+      </a> -->
     </div>
   </div>
-</div> -->
-<header class="navbar bg-success sticky-top shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">{{ title }}</a>
-</header>
-<div class="container-fluid">
-  <div class="row">
-      <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-          <div class="position-sticky pt-3">
-              <ul class="nav flex-column">
-                  <li class="nav-item">
-                      <a routerLink="/articles" class="nav-link" href="#">Статьи</a>
-                  </li>
-                  <li class="nav-item">
-                      <a routerLink="/tests" class="nav-link" href="#">Тесты</a>
-                  </li>
-              </ul>
-          </div>
-      </nav>
-      <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 mt-4">
-        <router-outlet></router-outlet>
-      </main>
+  <div id="page-content-wrapper">
+    <div class="container-fluid px-4 my-5">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

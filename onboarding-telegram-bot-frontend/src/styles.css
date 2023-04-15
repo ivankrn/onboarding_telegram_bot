@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: 'Muller';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('assets/fonts/MullerRegular.woff2') format('woff2'),
+         url('assets/fonts/MullerRegular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Muller';
+    font-weight: 250;
+    font-style: normal;
+    src: local('Muller'),
+         url('assets/fonts/MullerUltraLight.woff2') format('woff2'),
+         url('assets/fonts/MullerUltraLight.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Muller';
+    font-weight: 700;
+    font-style: bold;
+    src: local('Muller'),
+         url('assets/fonts/MullerBold.woff2') format('woff2'),
+         url('assets/fonts/MullerBold.woff') format('woff');
+}
