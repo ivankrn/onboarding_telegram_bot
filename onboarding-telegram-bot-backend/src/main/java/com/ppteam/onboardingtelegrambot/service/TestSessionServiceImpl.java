@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.TestSession;
 import com.ppteam.onboardingtelegrambot.database.TestSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ public class TestSessionServiceImpl implements TestSessionService {
 
     @Override
     public TestSession findByUserId(long userId) {
-        return this.testSessionRepository.findByUserId(userId).orElseThrow();
+        return this.testSessionRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
     }
 
     @Override

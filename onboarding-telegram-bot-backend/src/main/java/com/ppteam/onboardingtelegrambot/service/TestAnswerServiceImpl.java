@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.TestAnswer;
 import com.ppteam.onboardingtelegrambot.database.TestAnswerRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,6 @@ public class TestAnswerServiceImpl implements TestAnswerService {
 
     @Override
     public TestAnswer getCorrectAnswerForQuestionId(long questionId) {
-        return this.testAnswerRepository.findCorrectAnswerForQuestionId(questionId).orElseThrow();
+        return this.testAnswerRepository.findCorrectAnswerForQuestionId(questionId).orElseThrow(NotFoundException::new);
     }
 }

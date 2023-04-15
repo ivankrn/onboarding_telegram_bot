@@ -150,7 +150,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void sendMaterialsByTopicId(long chatId, int pageNumber, int topicId, boolean isTestBrowsingMode) {
+    private void sendMaterialsByTopicId(long chatId, int pageNumber, long topicId, boolean isTestBrowsingMode) {
         Pageable page = PageRequest.of(pageNumber, 10);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -209,7 +209,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         sendTestQuestion(chatId, userId, -1, -1);
     }
 
-    private void sendTestQuestion(long chatId, long userId, int questionId, int answerId) {
+    private void sendTestQuestion(long chatId, long userId, long questionId, long answerId) {
         TestSession session = testSessionService.findByUserId(userId);
         Test test = testService.findById(session.getTestId());
         Set<TestQuestion> questions = test.getQuestions();

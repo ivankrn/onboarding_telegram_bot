@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article findById(long id) {
-        return this.articleRepository.findById(id).orElseThrow();
+        return this.articleRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override

@@ -57,7 +57,7 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup materialChoiceMarkup(Page<? extends Material> materials, int topicId, boolean isTestBrowsingMode) {
+    public static InlineKeyboardMarkup materialChoiceMarkup(Page<? extends Material> materials, long topicId, boolean isTestBrowsingMode) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         materials.get().forEach(material -> {
             InlineKeyboardButton button = new InlineKeyboardButton(material.getTitle());

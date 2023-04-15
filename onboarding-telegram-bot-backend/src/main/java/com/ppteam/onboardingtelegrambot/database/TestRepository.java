@@ -11,12 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface TestRepository extends PagingAndSortingRepository<Test, Long>, CrudRepository<Test, Long> {
-    Page<Test> findByTopicId(int topicId, Pageable page);
-//    @EntityGraph(
-//            value = "test-entity-graph-with-questions-answers",
-//            type = EntityGraph.EntityGraphType.LOAD
-//    )
+    Page<Test> findByTopicId(long topicId, Pageable page);
 
-    @EntityGraph(attributePaths = {"questions", "questions.answers"})
+    @EntityGraph(attributePaths = {"topic", "questions", "questions.answers"})
     Optional<Test> findById(long id);
 }

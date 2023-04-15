@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface TestService {
     Page<Test> findAll(Pageable page);
-    Page<Test> findByTopicId(int topicId, Pageable page);
+    Page<Test> findByTopicId(long topicId, Pageable page);
     Test findById(long id);
     long count();
     void save(Test test);

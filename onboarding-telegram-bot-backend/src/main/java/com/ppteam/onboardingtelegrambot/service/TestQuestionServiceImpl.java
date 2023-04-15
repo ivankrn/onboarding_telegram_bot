@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.TestQuestion;
 import com.ppteam.onboardingtelegrambot.database.TestQuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ public class TestQuestionServiceImpl implements TestQuestionService {
 
     @Override
     public TestQuestion findById(long id) {
-        return this.testQuestionRepository.findById(id).orElseThrow();
+        return this.testQuestionRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override

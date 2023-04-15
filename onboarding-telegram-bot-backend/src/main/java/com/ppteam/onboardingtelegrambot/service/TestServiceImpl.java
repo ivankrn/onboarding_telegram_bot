@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.Test;
 import com.ppteam.onboardingtelegrambot.database.TestRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +17,12 @@ public class TestServiceImpl implements TestService {
         return this.testRepository.findAll(page);
     }
 
-    public Page<Test> findByTopicId(int topicId, Pageable page) {
+    public Page<Test> findByTopicId(long topicId, Pageable page) {
         return this.testRepository.findByTopicId(topicId, page);
     }
 
     public Test findById(long id) {
-        return this.testRepository.findById(id).orElseThrow();
+        return this.testRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     public long count() {
