@@ -11,4 +11,8 @@ public class CallbackQueryCommand {
     public static final String BROWSE_TESTS_BY_TOPIC_ID = "/browse_tests_by_topic_id";
     public static final String BEGIN_TEST_BY_ID = "/begin_test_by_id";
     public static final String CHOOSE_FOR_QUESTION_WITH_ID = "/choose_for_question";
+    public static final String PAGE = "page";
+    public static final String TEST = "test";
+    public static final String ARTICLE = "article";
+    public static final String ANSWER = "answer";
 }
