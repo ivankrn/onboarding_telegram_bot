@@ -19,7 +19,7 @@
             <div class="form-group" formArrayName="questions">
                 <ul class="list-group" *ngFor="let question of questions.controls; let questionIndex=index">
                     <li class="list-group-item my-3 ms-5" [formGroupName]="questionIndex">
-                        <button type="button" class="btn float-end" (click)="deleteQuestionById(questionIndex)">X</button>
+                        <button type="button" class="btn float-end" (click)="deleteQuestionById(questionIndex)"><i class="fas fa-times"></i></button>
                         <p class="lead">Вопрос {{ questionIndex + 1 }}</p>
                         <div class="form-group">
                             <label>Название вопроса:</label>
@@ -30,7 +30,7 @@
                             <ul class="list-group" *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let answerIndex=index">
                                 <li class="list-group-item my-3" [formGroupName]="answerIndex">
                                     <label for="answer">Ответ:</label>
-                                    <button type="button" class="btn float-end" (click)="deleteAnswerById(questionIndex, answerIndex)">X</button>
+                                    <button type="button" class="btn float-end" (click)="deleteAnswerById(questionIndex, answerIndex)"><i class="fas fa-times"></i></button>
                                     <input id="answer" type="text" formControlName="answer" class="form-control">
                                     <div class="div my-3">
                                         <label for="correct" class="form-check-label">Правильный ответ?</label>

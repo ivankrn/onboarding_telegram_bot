@@ -24,3 +24,8 @@
          url('assets/fonts/MullerBold.woff2') format('woff2'),
          url('assets/fonts/MullerBold.woff') format('woff');
 }
+
+* {
+    font-family: 'Muller';
+    font-weight: 400;
+}

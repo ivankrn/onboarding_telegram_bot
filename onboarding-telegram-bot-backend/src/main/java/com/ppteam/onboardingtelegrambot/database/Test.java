@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,5 +34,8 @@ public class Test extends Material {
     private Set<TestQuestion> questions = new HashSet<>();
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;
+    @JsonIgnore
+    @OneToOne(mappedBy = "test", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private TestStatistic statistic;
 }
 

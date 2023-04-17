@@ -1,0 +1,24 @@
+<table class="table bg-white table-bordered rounded overflow-hidden">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Тест</th>
+        <th scope="col">Общее количество попыток</th>
+        <th scope="col">Процент правильных ответов</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let statistic of statistics">
+        <td>{{ statistic.test.title }}</td>
+        <td>{{ statistic.totalAttemptsCount }}</td>
+        <td>{{ statistic.correctAnswersCount / statistic.totalAnswersCount | percent }}</td>
+      </tr>
+    </tbody>
+</table>
+<div *ngIf="statistics">
+    <pagination
+      [currentPage]="currentPage + 1"
+      [limit]="showLimit"
+      [total]="totalElements"
+      (changePage)="changePage($event)">
+    </pagination>
+</div>

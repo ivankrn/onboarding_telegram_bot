@@ -9,10 +9,12 @@ import { ArticleFormComponent } from './component/article-form/article-form.comp
 import { ArticleService } from './service/article.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TestListComponent } from './component/test-list/test-list/test-list.component';
-import { DashboardComponent } from './component/dashboard/dashboard/dashboard.component';
+import { StatisticsComponent } from './component/statistics/statistics/statistics.component';
 import { TestFormComponent } from './component/test-form/test-form/test-form.component';
 import { PaginationModule } from './pagination/pagination/pagination.module';
 import { TestService } from './service/test.service';
+import { TestStatisticsComponent } from './component/statistics/statistics/test-statistics/test-statistics.component';
+import { ArticleStatisticsComponent } from './component/statistics/statistics/article-statistics/article-statistics.component';
 
 @NgModule({
   declarations: [
@@ -20,8 +22,10 @@ import { TestService } from './service/test.service';
     ArticleListComponent,
     ArticleFormComponent,
     TestListComponent,
-    DashboardComponent,
+    StatisticsComponent,
     TestFormComponent,
+    TestStatisticsComponent,
+    ArticleStatisticsComponent,
   ],
   imports: [
     BrowserModule,

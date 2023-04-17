@@ -8,6 +8,7 @@ public interface ArticleService {
     Page<Article> findAll(Pageable page);
 
     Article findById(long id);
+    Article getReferenceById(long id);
 
     Page<Article> findByTopicId(long topicId, Pageable page);
 

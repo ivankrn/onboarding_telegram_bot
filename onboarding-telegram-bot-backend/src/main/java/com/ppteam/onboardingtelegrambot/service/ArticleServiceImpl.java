@@ -24,6 +24,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public Article getReferenceById(long id) {
+        return articleRepository.getReferenceById(id);
+    }
+
+    @Override
     public Page<Article> findByTopicId(long topicId, Pageable page) {
         return this.articleRepository.findByTopicId(topicId, page);
     }

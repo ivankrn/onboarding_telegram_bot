@@ -25,6 +25,10 @@ public class TestServiceImpl implements TestService {
         return this.testRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    public Test getReferenceById(long id) {
+        return testRepository.getReferenceById(id);
+    }
+
     public long count() {
         return this.testRepository.count();
     }

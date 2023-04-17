@@ -41,6 +41,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private TestSessionPassedQuestionService testSessionPassedQuestionService;
     @Autowired
     private ArticleTopicService articleTopicService;
+    @Autowired
+    private TestStatisticService testStatisticService;
+    @Autowired
+    private ArticleStatisticService articleStatisticService;
 
     public OnboardingTelegramBot(BotConfig botConfig) {
         this.botConfig = botConfig;
@@ -115,7 +119,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 sendTopicChoiceMenu(chatId, pageNumber, isTestBrowsingMode);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID:
-                int topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
                 sendMaterialsByTopicId(chatId, pageNumber, topicId, false);
                 break;
@@ -125,16 +129,21 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 sendMaterialsByTopicId(chatId, pageNumber, topicId, true);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLE_BY_ID:
-                int articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 sendArticleById(chatId, articleId);
                 break;
+            case CallbackQueryCommand.RATE_ARTICLE_BY_ID:
+                articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                int rating = Integer.parseInt(receivedMessage.split(" ")[2]);
+                rateArticleById(chatId, articleId, rating);
+                break;
             case CallbackQueryCommand.BEGIN_TEST_BY_ID:
-                int testId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long testId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 beginTestById(chatId, userId, testId);
                 break;
             case CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID:
-                int questionId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                int answerId = Integer.parseInt(receivedMessage.split(" ")[3]);
+                long questionId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long answerId = Integer.parseInt(receivedMessage.split(" ")[3]);
                 sendTestQuestion(chatId, userId, questionId, answerId);
                 break;
         }
@@ -174,10 +183,11 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(formatArticle(article));
-        if (article.getTest() != null) {
-            message.setReplyMarkup(Buttons.articleWithAttachedTestMarkup(article));
-        }
+        message.setReplyMarkup(Buttons.articleRatingMarkup(articleId));
         executeMessageWithLogging(message);
+        if (article.getTest() != null) {
+            offerTestById(chatId, article.getTest().getId());
+        }
     }
 
     private String formatArticle(Article article) {
@@ -188,10 +198,30 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             sb.append("\uD83D\uDCD5 Полезные ссылки:\n" + article.getUsefulLinks() + "\n\n");
         }
         sb.append("\uD83D\uDCC5 Дата создания статьи:\n" + article.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n\n");
-        if (article.getTest() != null) {
-            sb.append("\uD83D\uDCDD Для данной статьи доступен тест, не желаете пройти его?");
-        }
+        sb.append("\u2B50 Пожалуйста, оцените насколько данная статья была Вам полезна (5 - очень полезна, 1 - абсолютно бесполезна):");
         return sb.toString();
+    }
+
+    private void rateArticleById(long chatId, long articleId, int rating) {
+        ArticleStatistic articleStatistic;
+        if (!articleStatisticService.existsByArticleId(articleId)) {
+            articleStatistic = new ArticleStatistic();
+            articleStatistic.setArticle(articleService.getReferenceById(articleId));
+        } else {
+            articleStatistic = articleStatisticService.findByArticleId(articleId);
+        }
+        articleStatistic.setRatingsSum(articleStatistic.getRatingsSum() + rating);
+        articleStatistic.setTotalRatingsCount(articleStatistic.getTotalRatingsCount() + 1);
+        articleStatisticService.save(articleStatistic);
+        sendText(chatId, "Спасибо за оценку!");
+    }
+
+    private void offerTestById(long chatId, long testId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("\uD83D\uDCDD Для данной статьи доступен тест, не желаете пройти его?");
+        message.setReplyMarkup(Buttons.offerTestMarkup(testId));
+        executeMessageWithLogging(message);
     }
 
     private void sendAdminMenu(long chatId) {
@@ -201,7 +231,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void beginTestById(long chatId, long userId, int testId) {
+    private void beginTestById(long chatId, long userId, long testId) {
         TestSession session = new TestSession();
         session.setUserId(userId);
         session.setTestId(testId);
@@ -244,6 +274,17 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         } else {
             message.setText("Ваш счет: " + session.getScore());
             testSessionService.delete(session);
+            TestStatistic testStatistic;
+            if (!testStatisticService.existsByTestId(test.getId())) {
+                testStatistic = new TestStatistic();
+                testStatistic.setTest(testService.getReferenceById(test.getId()));
+            } else {
+                testStatistic = testStatisticService.findByTestId(test.getId());
+            }
+            testStatistic.setCorrectAnswersCount(testStatistic.getCorrectAnswersCount() + session.getScore());
+            testStatistic.setTotalAnswersCount(testStatistic.getTotalAnswersCount() + questions.size());
+            testStatistic.setTotalAttemptsCount(testStatistic.getTotalAttemptsCount() + 1);
+            testStatisticService.save(testStatistic);
         }
         executeMessageWithLogging(message);
     }

@@ -1,0 +1,24 @@
+<table class="table bg-white table-bordered rounded overflow-hidden">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Статья</th>
+        <th scope="col">Общее количество оценок</th>
+        <th scope="col">Средняя оценка</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let statistic of statistics">
+        <td>{{ statistic.article.title }}</td>
+        <td>{{ statistic.totalRatingsCount }}</td>
+        <td>{{ statistic.ratingsSum / statistic.totalRatingsCount | number: "1.0-2" }}</td>
+      </tr>
+    </tbody>
+</table>
+<div *ngIf="statistics">
+    <pagination
+      [currentPage]="currentPage + 1"
+      [limit]="showLimit"
+      [total]="totalElements"
+      (changePage)="changePage($event)">
+    </pagination>
+</div>

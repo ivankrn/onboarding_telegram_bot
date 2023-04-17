@@ -94,9 +94,22 @@ public class Buttons {
         return markup;
     }
 
-    public static InlineKeyboardMarkup articleWithAttachedTestMarkup(Article article) {
+    public static InlineKeyboardMarkup articleRatingMarkup(long articleId) {
+        List<InlineKeyboardButton> row = new ArrayList<>(5);
+        for (int rating = 1; rating <= 5; rating++) {
+            InlineKeyboardButton rateButton = new InlineKeyboardButton(String.valueOf(rating));
+            rateButton.setCallbackData(CallbackQueryCommand.RATE_ARTICLE_BY_ID + " " + articleId + " " + rating);
+            row.add(rateButton);
+        }
+        List<List<InlineKeyboardButton>> rows = List.of(row);
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rows);
+        return markup;
+    }
+
+    public static InlineKeyboardMarkup offerTestMarkup(long testId) {
         InlineKeyboardButton beginTestButton = new InlineKeyboardButton("Начать тест");
-        beginTestButton.setCallbackData(CallbackQueryCommand.BEGIN_TEST_BY_ID + " " + article.getTest().getId());
+        beginTestButton.setCallbackData(CallbackQueryCommand.BEGIN_TEST_BY_ID + " " + testId);
         List<List<InlineKeyboardButton>> rows = List.of(List.of(beginTestButton));
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
