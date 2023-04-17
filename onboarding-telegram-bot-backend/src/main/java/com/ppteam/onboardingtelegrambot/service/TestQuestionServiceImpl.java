@@ -15,16 +15,16 @@ public class TestQuestionServiceImpl implements TestQuestionService {
 
     @Override
     public TestQuestion findById(long id) {
-        return this.testQuestionRepository.findById(id).orElseThrow(NotFoundException::new);
+        return testQuestionRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
     public List<TestQuestion> findByTestId(long testId) {
-        return this.testQuestionRepository.findByTestId(testId);
+        return testQuestionRepository.findByTestId(testId);
     }
 
     @Override
     public boolean exists(long id) {
-        return this.testQuestionRepository.existsById(id);
+        return testQuestionRepository.existsById(id);
     }
 }

@@ -13,6 +13,6 @@ public class TestAnswerServiceImpl implements TestAnswerService {
 
     @Override
     public TestAnswer getCorrectAnswerForQuestionId(long questionId) {
-        return this.testAnswerRepository.findCorrectAnswerForQuestionId(questionId).orElseThrow(NotFoundException::new);
+        return testAnswerRepository.findCorrectAnswerForQuestionId(questionId).orElseThrow(NotFoundException::new);
     }
 }

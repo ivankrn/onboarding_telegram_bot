@@ -15,12 +15,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Page<Article> findAll(Pageable page) {
-        return this.articleRepository.findAll(page);
+        return articleRepository.findAll(page);
     }
 
     @Override
     public Article findById(long id) {
-        return this.articleRepository.findById(id).orElseThrow(NotFoundException::new);
+        return articleRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -30,21 +30,21 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Page<Article> findByTopicId(long topicId, Pageable page) {
-        return this.articleRepository.findByTopicId(topicId, page);
+        return articleRepository.findByTopicId(topicId, page);
     }
 
     @Override
     public long count() {
-        return this.articleRepository.count();
+        return articleRepository.count();
     }
 
     @Override
     public void save(Article article) {
-        this.articleRepository.save(article);
+        articleRepository.save(article);
     }
 
     @Override
     public void deleteById(long id) {
-        this.articleRepository.deleteById(id);
+        articleRepository.deleteById(id);
     }
 }

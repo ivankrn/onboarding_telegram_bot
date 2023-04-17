@@ -12,6 +12,6 @@ public class TestSessionPassedQuestionServiceImpl implements TestSessionPassedQu
 
     @Override
     public void save(TestSessionPassedQuestion passedQuestion) {
-        this.testSessionPassedQuestionRepository.save(passedQuestion);
+        testSessionPassedQuestionRepository.save(passedQuestion);
     }
 }

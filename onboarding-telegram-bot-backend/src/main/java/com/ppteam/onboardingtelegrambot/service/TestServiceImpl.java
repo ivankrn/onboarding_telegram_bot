@@ -13,31 +13,38 @@ import org.springframework.stereotype.Service;
 public class TestServiceImpl implements TestService {
     private final TestRepository testRepository;
 
+    @Override
     public Page<Test> findAll(Pageable page) {
-        return this.testRepository.findAll(page);
+        return testRepository.findAll(page);
     }
 
+    @Override
     public Page<Test> findByTopicId(long topicId, Pageable page) {
-        return this.testRepository.findByTopicId(topicId, page);
+        return testRepository.findByTopicId(topicId, page);
     }
 
+    @Override
     public Test findById(long id) {
-        return this.testRepository.findById(id).orElseThrow(NotFoundException::new);
+        return testRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    @Override
     public Test getReferenceById(long id) {
         return testRepository.getReferenceById(id);
     }
 
+    @Override
     public long count() {
-        return this.testRepository.count();
+        return testRepository.count();
     }
 
+    @Override
     public void save(Test test) {
-        this.testRepository.save(test);
+        testRepository.save(test);
     }
 
+    @Override
     public void deleteById(long id) {
-        this.testRepository.deleteById(id);
+        testRepository.deleteById(id);
     }
 }

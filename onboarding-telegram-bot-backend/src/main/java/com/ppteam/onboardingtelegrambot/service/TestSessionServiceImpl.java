@@ -13,27 +13,27 @@ public class TestSessionServiceImpl implements TestSessionService {
 
     @Override
     public TestSession findByUserId(long userId) {
-        return this.testSessionRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+        return testSessionRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
     }
 
     @Override
     public boolean hasActiveTestSession(long userId) {
-        return this.testSessionRepository.findByUserId(userId).isPresent();
+        return testSessionRepository.findByUserId(userId).isPresent();
     }
 
     @Override
     public void save(TestSession session) {
-        this.testSessionRepository.save(session);
+        testSessionRepository.save(session);
     }
 
     @Override
     public void increaseScore(TestSession session) {
         session.setScore(session.getScore() + 1);
-        this.testSessionRepository.save(session);
+        testSessionRepository.save(session);
     }
 
     @Override
     public void delete(TestSession session) {
-        this.testSessionRepository.delete(session);
+        testSessionRepository.delete(session);
     }
 }

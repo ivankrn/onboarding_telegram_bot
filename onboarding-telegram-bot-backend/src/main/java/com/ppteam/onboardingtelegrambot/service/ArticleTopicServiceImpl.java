@@ -15,6 +15,6 @@ public class ArticleTopicServiceImpl implements ArticleTopicService {
 
     @Override
     public Page<ArticleTopic> findAll(Pageable page) {
-        return this.articleTopicRepository.findAll(page);
+        return articleTopicRepository.findAll(page);
     }
 }

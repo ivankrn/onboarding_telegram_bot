@@ -2,6 +2,7 @@ package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
 import com.ppteam.onboardingtelegrambot.service.ArticleTopicService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,13 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/article_topics")
 @CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 public class ArticleTopicController {
 
     private final ArticleTopicService articleTopicService;
-
-    public ArticleTopicController(ArticleTopicService articleTopicService) {
-        this.articleTopicService = articleTopicService;
-    }
 
     @GetMapping
     public List<ArticleTopic> getArticleTopics() {
