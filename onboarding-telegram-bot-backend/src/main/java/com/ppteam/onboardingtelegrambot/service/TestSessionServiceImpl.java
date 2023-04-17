@@ -3,6 +3,9 @@ package com.ppteam.onboardingtelegrambot.service;
 import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.TestSession;
 import com.ppteam.onboardingtelegrambot.database.TestSessionRepository;
+import com.ppteam.onboardingtelegrambot.dto.TestSessionDto;
+import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +13,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TestSessionServiceImpl implements TestSessionService {
     private final TestSessionRepository testSessionRepository;
+    private final MapStructMapper mapStructMapper;
 
     @Override
-    public TestSession findByUserId(long userId) {
-        return testSessionRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+    public TestSessionDto findByUserId(long userId) {
+        return testSessionRepository.findByUserId(userId).map(mapStructMapper::testSessionToTestSessionDto)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -22,18 +27,26 @@ public class TestSessionServiceImpl implements TestSessionService {
     }
 
     @Override
-    public void save(TestSession session) {
+    public void createForUserAndTest(long userId, long testId) {
+        TestSession session = new TestSession();
+        session.setUserId(userId);
+        session.setTestId(testId);
         testSessionRepository.save(session);
     }
 
     @Override
-    public void increaseScore(TestSession session) {
-        session.setScore(session.getScore() + 1);
-        testSessionRepository.save(session);
+    public void save(TestSessionDto session) {
+        testSessionRepository.save(mapStructMapper.testSessionDtoToTestSession(session));
     }
 
     @Override
-    public void delete(TestSession session) {
-        testSessionRepository.delete(session);
+    @Transactional
+    public void increaseScore(long id) {
+        testSessionRepository.increaseScore(id);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        testSessionRepository.deleteById(id);
     }
 }

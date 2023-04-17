@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
-import com.ppteam.onboardingtelegrambot.database.Test;
+import com.ppteam.onboardingtelegrambot.dto.TestDto;
+import com.ppteam.onboardingtelegrambot.dto.TestFullDto;
 import com.ppteam.onboardingtelegrambot.service.TestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,13 @@ public class TestController {
     private final TestService testService;
 
     @GetMapping
-    public Page<Test> getTests(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Page<TestDto> getTests(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size);
         return testService.findAll(paging);
     }
 
     @GetMapping("/{id}")
-    public Test getTest(@PathVariable long id) {
+    public TestFullDto getTest(@PathVariable long id) {
         return testService.findById(id);
     }
 
@@ -33,7 +34,7 @@ public class TestController {
     }
 
     @PostMapping
-    public void saveTest(@RequestBody @Valid Test test) {
+    public void saveTest(@RequestBody @Valid TestFullDto test) {
         testService.save(test);
     }
 

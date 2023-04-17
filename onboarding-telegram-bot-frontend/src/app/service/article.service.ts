@@ -12,6 +12,10 @@ export class ArticleService {
 
   constructor(private httpClient: HttpClient) { }
 
+  public findById(id: number): Observable<Article> {
+    return this.httpClient.get<Article>(this.apiUrl + "/" + id);
+  }
+
   public findAll(params: any): Observable<any> {
     return this.httpClient.get(this.apiUrl, {params});
   }

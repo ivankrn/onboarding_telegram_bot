@@ -1,11 +1,12 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.TestSession;
+import com.ppteam.onboardingtelegrambot.dto.TestSessionDto;
 
 public interface TestSessionService {
-    TestSession findByUserId(long userId);
+    TestSessionDto findByUserId(long userId);
     boolean hasActiveTestSession(long userId);
-    void save(TestSession session);
-    void increaseScore(TestSession session);
-    void delete(TestSession session);
+    void createForUserAndTest(long userId, long testId);
+    void save(TestSessionDto session);
+    void increaseScore(long id);
+    void deleteById(long id);
 }

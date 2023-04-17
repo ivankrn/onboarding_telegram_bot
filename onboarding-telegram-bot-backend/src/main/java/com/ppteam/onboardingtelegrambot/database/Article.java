@@ -1,7 +1,6 @@
 package com.ppteam.onboardingtelegrambot.database;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -11,7 +10,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity
 @Table(name = "article")
-public class Article extends Material {
+public class Article {
     @Id
     @SequenceGenerator(name = "article_id_seq", sequenceName = "article_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_id_seq")
@@ -32,7 +31,6 @@ public class Article extends Material {
     private Test test;
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;
-    @JsonIgnore
     @OneToOne(mappedBy = "article", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private ArticleStatistic statistic;
 }

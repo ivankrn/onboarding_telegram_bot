@@ -13,6 +13,10 @@ export class TestService {
 
   constructor(private httpClient: HttpClient) { }
 
+  public findById(id: number): Observable<Test> {
+    return this.httpClient.get<Test>(this.apiUrl + "/" + id);
+  }
+
   public findAll(params: any): Observable<any> {
     return this.httpClient.get(this.apiUrl, {params});
   }

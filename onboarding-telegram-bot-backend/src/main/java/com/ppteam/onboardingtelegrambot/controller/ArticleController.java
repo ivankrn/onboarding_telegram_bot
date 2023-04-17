@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.database.Article;
+import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
 import com.ppteam.onboardingtelegrambot.service.ArticleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public Page<Article> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Page<ArticleDto> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size);
         return articleService.findAll(paging);
     }
@@ -29,12 +30,12 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public Article getArticle(@PathVariable long id) {
+    public ArticleDto getArticle(@PathVariable long id) {
         return articleService.findById(id);
     }
 
     @PostMapping
-    public void saveArticle(@RequestBody @Valid Article article) {
+    public void saveArticle(@RequestBody @Valid ArticleDto article) {
         articleService.save(article);
     }
 

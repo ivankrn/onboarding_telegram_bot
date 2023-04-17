@@ -1,7 +1,10 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.TestSessionPassedQuestion;
+import com.ppteam.onboardingtelegrambot.dto.TestSessionPassedQuestionDto;
+
+import java.util.List;
 
 public interface TestSessionPassedQuestionService {
-    void save(TestSessionPassedQuestion passedQuestion);
+    List<TestSessionPassedQuestionDto> findBySessionId(long sessionId);
+    void save(TestSessionPassedQuestionDto passedQuestion);
 }

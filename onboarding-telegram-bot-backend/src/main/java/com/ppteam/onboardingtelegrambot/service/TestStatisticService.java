@@ -1,17 +1,16 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.TestStatistic;
+import com.ppteam.onboardingtelegrambot.dto.TestStatisticDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TestStatisticService {
-    Page<TestStatistic> findAll(Pageable page);
+    Page<TestStatisticDto> findAll(Pageable page);
 
-    TestStatistic findByTestId(long testId);
+    TestStatisticDto findById(long id);
 
-    TestStatistic findById(long id);
+    void save(TestStatisticDto testStatisticDto);
 
-    void save(TestStatistic testStatistic);
-    boolean existsByTestId(long testId);
     void deleteById(long id);
+    void updateForTest(long testId, int score);
 }

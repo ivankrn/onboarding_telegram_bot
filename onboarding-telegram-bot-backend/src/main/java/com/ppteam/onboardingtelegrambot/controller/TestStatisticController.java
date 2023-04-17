@@ -1,6 +1,6 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
-import com.ppteam.onboardingtelegrambot.database.TestStatistic;
+import com.ppteam.onboardingtelegrambot.dto.TestStatisticDto;
 import com.ppteam.onboardingtelegrambot.service.TestStatisticService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,13 +17,13 @@ public class TestStatisticController {
     private final TestStatisticService testStatisticService;
 
     @GetMapping
-    public Page<TestStatistic> getStatistics(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Page<TestStatisticDto> getStatistics(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size);
         return testStatisticService.findAll(paging);
     }
 
     @GetMapping("/{id}")
-    public TestStatistic getStatistic(@PathVariable long id) {
+    public TestStatisticDto getStatistic(@PathVariable long id) {
         return testStatisticService.findById(id);
     }
 

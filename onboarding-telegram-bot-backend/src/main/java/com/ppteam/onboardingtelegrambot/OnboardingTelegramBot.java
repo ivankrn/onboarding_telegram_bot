@@ -3,7 +3,7 @@ package com.ppteam.onboardingtelegrambot;
 import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
-import com.ppteam.onboardingtelegrambot.database.*;
+import com.ppteam.onboardingtelegrambot.dto.*;
 import com.ppteam.onboardingtelegrambot.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -115,12 +115,11 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 break;
             case CallbackQueryCommand.GET_TOPICS:
                 boolean isTestBrowsingMode = receivedMessage.split(" ")[1].equals("test");
-                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
-                sendTopicChoiceMenu(chatId, pageNumber, isTestBrowsingMode);
+                sendTopicChoiceMenu(chatId, isTestBrowsingMode);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID:
                 long topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
                 sendMaterialsByTopicId(chatId, pageNumber, topicId, false);
                 break;
             case CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID:
@@ -149,9 +148,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendTopicChoiceMenu(long chatId, int pageNumber, boolean isTestBrowsingMode) {
-        Pageable page = PageRequest.of(pageNumber, 10);
-        Page<ArticleTopic> articleTopics = articleTopicService.findAll(page);
+    private void sendTopicChoiceMenu(long chatId, boolean isTestBrowsingMode) {
+        List<ArticleTopicDto> articleTopics = articleTopicService.findAll();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберите тему:");
@@ -169,17 +167,17 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             message.setText("Выберите статью:");
         }
         if (isTestBrowsingMode) {
-            Page<Test> tests = testService.findByTopicId(topicId, page);
-            message.setReplyMarkup(Buttons.materialChoiceMarkup(tests, topicId, isTestBrowsingMode));
+            Page<TestDto> tests = testService.findByTopicId(topicId, page);
+            message.setReplyMarkup(Buttons.testChoiceMarkup(tests, topicId));
         } else {
-            Page<Article> articles = articleService.findByTopicId(topicId, page);
-            message.setReplyMarkup(Buttons.materialChoiceMarkup(articles, topicId, isTestBrowsingMode));
+            Page<ArticleDto> articles = articleService.findByTopicId(topicId, page);
+            message.setReplyMarkup(Buttons.articleChoiceMarkup(articles, topicId));
         }
         executeMessageWithLogging(message);
     }
 
     private void sendArticleById(long chatId, long articleId) {
-        Article article = articleService.findById(articleId);
+        ArticleDto article = articleService.findById(articleId);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(formatArticle(article));
@@ -190,7 +188,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private String formatArticle(Article article) {
+    private String formatArticle(ArticleDto article) {
         StringBuilder sb = new StringBuilder();
         sb.append("\u2139 " + article.getTitle() + "\n\n");
         sb.append(article.getContent() + "\n\n");
@@ -203,16 +201,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     }
 
     private void rateArticleById(long chatId, long articleId, int rating) {
-        ArticleStatistic articleStatistic;
-        if (!articleStatisticService.existsByArticleId(articleId)) {
-            articleStatistic = new ArticleStatistic();
-            articleStatistic.setArticle(articleService.getReferenceById(articleId));
-        } else {
-            articleStatistic = articleStatisticService.findByArticleId(articleId);
-        }
-        articleStatistic.setRatingsSum(articleStatistic.getRatingsSum() + rating);
-        articleStatistic.setTotalRatingsCount(articleStatistic.getTotalRatingsCount() + 1);
-        articleStatisticService.save(articleStatistic);
+        articleStatisticService.updateForArticle(articleId, rating);
         sendText(chatId, "Спасибо за оценку!");
     }
 
@@ -232,30 +221,26 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     }
 
     private void beginTestById(long chatId, long userId, long testId) {
-        TestSession session = new TestSession();
-        session.setUserId(userId);
-        session.setTestId(testId);
-        testSessionService.save(session);
+        testSessionService.createForUserAndTest(userId, testId);
         sendTestQuestion(chatId, userId, -1, -1);
     }
 
     private void sendTestQuestion(long chatId, long userId, long questionId, long answerId) {
-        TestSession session = testSessionService.findByUserId(userId);
-        Test test = testService.findById(session.getTestId());
-        Set<TestQuestion> questions = test.getQuestions();
-        Set<TestSessionPassedQuestion> passedQuestions = session.getPassedQuestions();
-        if (this.testQuestionService.exists(questionId)) {
-            TestQuestion previousQuestion = testQuestionService.findById(questionId);
-            if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == questionId)) {
-                TestAnswer correctAnswer = testAnswerService.getCorrectAnswerForQuestionId(previousQuestion.getId());
-                if (correctAnswer.getId() == answerId) {
-                    testSessionService.increaseScore(session);
-                }
-            } else {
+        TestSessionDto session = testSessionService.findByUserId(userId);
+        List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
+        List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findBySessionId(session.getId());
+        if (testQuestionService.exists(questionId)) {
+            if (didUserAnswerQuestionBefore(passedQuestions, questionId)) {
                 sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
                 return;
             }
-            TestSessionPassedQuestion passedQuestion = new TestSessionPassedQuestion();
+            TestQuestionDto previousQuestion = testQuestionService.findById(questionId);
+            TestAnswerDto correctAnswer = testAnswerService.getCorrectAnswerForQuestionId(previousQuestion.getId());
+            if (isUserAnswerCorrect(correctAnswer, answerId)) {
+                testSessionService.increaseScore(session.getId());
+                session.setScore(session.getScore() + 1);
+            }
+            TestSessionPassedQuestionDto passedQuestion = new TestSessionPassedQuestionDto();
             passedQuestion.setQuestionId(previousQuestion.getId());
             passedQuestion.setTestSession(session);
             testSessionPassedQuestionService.save(passedQuestion);
@@ -264,29 +249,33 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         if (passedQuestions.size() < questions.size()) {
-            for (TestQuestion question : questions) {
-                if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == question.getId())) {
-                    message.setText(question.getQuestion());
-                    message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question.getAnswers(), question.getId()));
-                    break;
-                }
-            }
+            TestQuestionDto nextQuestion = getNextUnansweredQuestion(questions, passedQuestions);
+            message.setText(nextQuestion.getQuestion());
+            message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(testQuestionService.findByIdWithAnswers(nextQuestion.getId())));
         } else {
             message.setText("Ваш счет: " + session.getScore());
-            testSessionService.delete(session);
-            TestStatistic testStatistic;
-            if (!testStatisticService.existsByTestId(test.getId())) {
-                testStatistic = new TestStatistic();
-                testStatistic.setTest(testService.getReferenceById(test.getId()));
-            } else {
-                testStatistic = testStatisticService.findByTestId(test.getId());
-            }
-            testStatistic.setCorrectAnswersCount(testStatistic.getCorrectAnswersCount() + session.getScore());
-            testStatistic.setTotalAnswersCount(testStatistic.getTotalAnswersCount() + questions.size());
-            testStatistic.setTotalAttemptsCount(testStatistic.getTotalAttemptsCount() + 1);
-            testStatisticService.save(testStatistic);
+            testSessionService.deleteById(session.getId());
+            testStatisticService.updateForTest(session.getTestId(), session.getScore());
         }
         executeMessageWithLogging(message);
+    }
+
+    private boolean didUserAnswerQuestionBefore(List<TestSessionPassedQuestionDto> passedQuestions, long questionId) {
+        return passedQuestions.stream().anyMatch(pq -> pq.getQuestionId() == questionId);
+    }
+
+    private boolean isUserAnswerCorrect(TestAnswerDto correctAnswer, long userAnswerId) {
+        return userAnswerId == correctAnswer.getId();
+    }
+
+    private TestQuestionDto getNextUnansweredQuestion(List<TestQuestionDto> questions,
+                                                          List<TestSessionPassedQuestionDto> passedQuestions) {
+        for (TestQuestionDto question : questions) {
+            if (passedQuestions.stream().noneMatch(pq -> pq.getQuestionId() == question.getId())) {
+                return question;
+            }
+        }
+        return null;
     }
 
     private void sendText(long chatId, String text) {

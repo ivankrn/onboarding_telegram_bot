@@ -1,12 +1,13 @@
 package com.ppteam.onboardingtelegrambot.database;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "questions")
 @ToString(exclude = "questions")
 @Table(name = "test")
-public class Test extends Material {
+public class Test {
     @Id
     @SequenceGenerator(name = "test_id_seq", sequenceName = "test_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_id_seq")
@@ -29,13 +30,18 @@ public class Test extends Material {
     @NotBlank
     private String title;
     private String description;
+    @NotEmpty
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "test-questions")
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<TestQuestion> questions = new HashSet<>();
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;
-    @JsonIgnore
     @OneToOne(mappedBy = "test", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private TestStatistic statistic;
+
+    public void addQuestion(TestQuestion testQuestion) {
+        this.questions.add(testQuestion);
+        testQuestion.setTest(this);
+    }
 }
 

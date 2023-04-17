@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
@@ -14,6 +14,8 @@ import { TestService } from 'src/app/service/test.service';
 })
 export class ArticleFormComponent implements OnInit {
 
+  articleId: number | undefined;
+  paramsSub: Subscription;
   article: Article;
   articleTopics: Observable<Map<number, string>>;
   tests: Observable<Map<number, string>>;
@@ -39,10 +41,15 @@ export class ArticleFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.pipe(map(() => window.history.state)).subscribe(data => {
-      this.article = data;
-      this.form.patchValue(data);
-    });
+    this.paramsSub = this.route.params.subscribe(params => {
+      if (params["id"] !== undefined) {
+        this.articleId = +params["id"];
+        this.articleService.findById(this.articleId).subscribe((data: any) => {
+          this.article = data;
+          this.form.patchValue(data);
+        })
+      }
+    })
   }
 
   public onSubmit() {

@@ -1,5 +1,5 @@
 <div class="col-11">
-<h2>Список тестов</h2>
+    <h2>Список тестов</h2>
     <table class="table table-light table-bordered rounded overflow-hidden">
         <thead>
             <tr>
@@ -21,7 +21,7 @@
                     <button class="btn btn-danger" (click)="onDelete(test)">
                         <i class="fas fa-times"></i>
                     </button>
-                    <button routerLink='/test' [state]="test" class="btn btn-info ms-2">
+                    <button [routerLink]="['edit', test.id]" class="btn btn-info ms-2">
                         <i class="fas fa-pen"></i>
                     </button>
                 </div>
@@ -37,5 +37,5 @@
             (changePage)="changePage($event)">
         </pagination>
     </div>
-    <button routerLink="/test" type="submit" class="btn btn-info">Добавить тест</button>
+    <button routerLink="create" type="submit" class="btn btn-info">Добавить тест</button>
 </div>

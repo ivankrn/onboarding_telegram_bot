@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { Test } from 'src/app/model/test';
 import { TestQuestion } from 'src/app/model/test-question';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
-import { ArticleService } from 'src/app/service/article.service';
 import { TestService } from 'src/app/service/test.service';
 
 @Component({
@@ -14,8 +13,10 @@ import { TestService } from 'src/app/service/test.service';
   templateUrl: './test-form.component.html',
   styleUrls: ['./test-form.component.css']
 })
-export class TestFormComponent implements OnInit {
+export class TestFormComponent implements OnInit, OnDestroy {
 
+  testId: number | undefined;
+  paramsSub: Subscription;
   test: Test;
   articleTopics: Observable<Map<number, string>>;
   form = new FormGroup({
@@ -25,37 +26,45 @@ export class TestFormComponent implements OnInit {
       id: new FormControl(null, Validators.required),
       title: new FormControl()
     }),
-    questions: new FormArray([])
+    questions: new FormArray([], Validators.required)
   });
 
   constructor(private route: ActivatedRoute, private router: Router, private testService: TestService,
-    private articleService: ArticleService, private articleTopicService: ArticleTopicService) {
+    private articleTopicService: ArticleTopicService) {
+    this.test = new Test();
     this.updateTopics();
   }
 
   ngOnInit() {
-    this.route.paramMap.pipe(map(() => window.history.state)).subscribe(data => {
-      this.test = data;
-      this.form.patchValue(data);
-      data.questions.forEach((q: { [x: string]: any; }) => {
-        const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
-          id: new FormControl(ans["id"]),
-          answer: new FormControl(ans["answer"], Validators.required),
-          correct: new FormControl(ans["correct"])
-        }));
-        this.questions.push(new FormGroup({
-          id: new FormControl(q["id"]),
-          question: new FormControl(q["question"], Validators.required),
-          answers: new FormArray(questionAnswers)
-        }));
-      });
+    this.paramsSub = this.route.params.subscribe(params => {
+      if (params["id"] !== undefined) {
+        this.testId = +params["id"];
+        this.testService.findById(this.testId).subscribe((data: any) => {
+          this.test = data;
+          this.form.patchValue(data);
+          data.questions.forEach((q: { [x: string]: any; }) => {
+            const questionAnswers = q["answers"].map((ans: { [x: string]: any; }) => new FormGroup({
+              id: new FormControl(ans["id"]),
+              answer: new FormControl(ans["answer"], Validators.required),
+              correct: new FormControl(ans["correct"])
+            }));
+            this.questions.push(new FormGroup({
+              id: new FormControl(q["id"]),
+              question: new FormControl(q["question"], Validators.required),
+              answers: new FormArray(questionAnswers)
+            }));
+          });
+        });
+      }
     });
   }
 
+  ngOnDestroy() {
+    this.paramsSub.unsubscribe();
+  }
+
   public onSubmit() {
-    console.log(this.form.value);
     this.test = Object.assign(this.test, this.form.value);
-    console.log(this.test);
     this.testService.save(this.test).subscribe(() => this.goToTestList());
   }
 
@@ -78,7 +87,7 @@ export class TestFormComponent implements OnInit {
   addQuestion() {
     this.questions.push(new FormGroup({
       question: new FormControl("", Validators.required),
-      answers: new FormArray([])
+      answers: new FormArray([], Validators.required)
     }));
   }
 

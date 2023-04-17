@@ -1,15 +1,20 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.Test;
+import com.ppteam.onboardingtelegrambot.dto.TestDto;
+import com.ppteam.onboardingtelegrambot.dto.TestFullDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TestService {
-    Page<Test> findAll(Pageable page);
-    Page<Test> findByTopicId(long topicId, Pageable page);
-    Test findById(long id);
-    Test getReferenceById(long id);
+    Page<TestDto> findAll(Pageable page);
+
+    Page<TestDto> findByTopicId(long topicId, Pageable page);
+
+    TestFullDto findById(long id);
+
     long count();
-    void save(Test test);
+
+    void save(TestFullDto testFullDto);
+
     void deleteById(long id);
 }

@@ -1,8 +1,10 @@
 package com.ppteam.onboardingtelegrambot.service;
 
 import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
-import com.ppteam.onboardingtelegrambot.database.Test;
 import com.ppteam.onboardingtelegrambot.database.TestRepository;
+import com.ppteam.onboardingtelegrambot.dto.TestDto;
+import com.ppteam.onboardingtelegrambot.dto.TestFullDto;
+import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,25 +14,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
     private final TestRepository testRepository;
+    private final MapStructMapper mapStructMapper;
 
     @Override
-    public Page<Test> findAll(Pageable page) {
-        return testRepository.findAll(page);
+    public Page<TestDto> findAll(Pageable page) {
+        return testRepository.findAll(page).map(mapStructMapper::testToTestDto);
     }
 
     @Override
-    public Page<Test> findByTopicId(long topicId, Pageable page) {
-        return testRepository.findByTopicId(topicId, page);
+    public Page<TestDto> findByTopicId(long topicId, Pageable page) {
+        return testRepository.findByTopicId(topicId, page).map(mapStructMapper::testToTestDto);
     }
 
     @Override
-    public Test findById(long id) {
-        return testRepository.findById(id).orElseThrow(NotFoundException::new);
-    }
-
-    @Override
-    public Test getReferenceById(long id) {
-        return testRepository.getReferenceById(id);
+    public TestFullDto findById(long id) {
+        return testRepository.findById(id).map(mapStructMapper::testToTestFullDto)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -39,8 +38,8 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void save(Test test) {
-        testRepository.save(test);
+    public void save(TestFullDto testFullDto) {
+        testRepository.save(mapStructMapper.testFullDtoToTest(testFullDto));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
 import com.ppteam.onboardingtelegrambot.service.ArticleTopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +22,8 @@ public class ArticleTopicController {
     private final ArticleTopicService articleTopicService;
 
     @GetMapping
-    public List<ArticleTopic> getArticleTopics() {
-        Pageable page = PageRequest.of(0, 20);
-        return articleTopicService.findAll(page).getContent();
+    public List<ArticleTopicDto> getArticleTopics() {
+        return articleTopicService.findAll();
     }
 
 }

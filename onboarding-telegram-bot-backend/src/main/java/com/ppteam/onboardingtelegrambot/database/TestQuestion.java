@@ -1,9 +1,8 @@
 package com.ppteam.onboardingtelegrambot.database;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,12 +23,16 @@ public class TestQuestion {
     private long id;
     @ManyToOne
     @JoinColumn(name = "test_id", nullable = false)
-    @JsonBackReference(value = "test-questions")
     private Test test;
     @NotBlank
     @Column(nullable = false)
     private String question;
+    @NotEmpty
     @OneToMany(mappedBy = "testQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "test-answers")
     private Set<TestAnswer> answers = new HashSet<>();
+
+    public void addAnswer(TestAnswer testAnswer) {
+        this.answers.add(testAnswer);
+        testAnswer.setTestQuestion(this);
+    }
 }

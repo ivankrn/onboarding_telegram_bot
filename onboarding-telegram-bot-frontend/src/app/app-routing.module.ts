@@ -8,9 +8,11 @@ import { TestListComponent } from './component/test-list/test-list/test-list.com
 
 const routes: Routes = [
   { path: 'articles', component: ArticleListComponent },
-  { path: 'article', component: ArticleFormComponent },
+  { path: 'articles/edit/:id', component: ArticleFormComponent },
+  { path: 'articles/create', component: ArticleFormComponent },
   { path: 'tests', component: TestListComponent },
-  { path: 'test', component: TestFormComponent },
+  { path: 'tests/edit/:id', component: TestFormComponent },
+  { path: 'tests/create', component: TestFormComponent },
   { path: '**', component: StatisticsComponent }
 ];
 

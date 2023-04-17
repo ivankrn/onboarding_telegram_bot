@@ -1,6 +1,5 @@
 package com.ppteam.onboardingtelegrambot.database;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +20,6 @@ public class TestAnswer {
     private long id;
     @ManyToOne
     @JoinColumn(name = "test_question_id", nullable = false)
-    @JsonBackReference(value = "test-answers")
     private TestQuestion testQuestion;
     @NotBlank
     @Column(nullable = false)

@@ -1,17 +1,17 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.ArticleStatistic;
+import com.ppteam.onboardingtelegrambot.dto.ArticleStatisticDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ArticleStatisticService {
-    Page<ArticleStatistic> findAll(Pageable page);
+    Page<ArticleStatisticDto> findAll(Pageable page);
 
-    ArticleStatistic findByArticleId(long articleId);
+    ArticleStatisticDto findById(long id);
 
-    ArticleStatistic findById(long id);
+    void save(ArticleStatisticDto articleStatistic);
 
-    void save(ArticleStatistic articleStatistic);
-    boolean existsByArticleId(long articleId);
     void deleteById(long id);
+
+    void updateForArticle(long articleId, int rating);
 }

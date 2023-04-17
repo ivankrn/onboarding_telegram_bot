@@ -1,9 +1,9 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
+
+import java.util.List;
 
 public interface ArticleTopicService {
-    Page<ArticleTopic> findAll(Pageable page);
+    List<ArticleTopicDto> findAll();
 }

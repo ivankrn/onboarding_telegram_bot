@@ -1,7 +1,7 @@
 package com.ppteam.onboardingtelegrambot.service;
 
-import com.ppteam.onboardingtelegrambot.database.TestAnswer;
+import com.ppteam.onboardingtelegrambot.dto.TestAnswerDto;
 
 public interface TestAnswerService {
-    TestAnswer getCorrectAnswerForQuestionId(long questionId);
+    TestAnswerDto getCorrectAnswerForQuestionId(long questionId);
 }
