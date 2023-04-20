@@ -9,11 +9,10 @@ import lombok.Data;
 @Table(name = "test_statistic")
 public class TestStatistic {
     @Id
-    @SequenceGenerator(name = "test_statistic_id_seq", sequenceName = "test_statistic_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_statistic_id_seq")
     private long id;
     @OneToOne
     @JoinColumn(name = "test_id", nullable = false)
+    @MapsId
     private Test test;
     @NotNull
     @Column(name = "correct_answers_count")

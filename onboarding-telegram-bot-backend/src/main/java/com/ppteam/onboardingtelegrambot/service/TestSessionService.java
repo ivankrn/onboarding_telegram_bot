@@ -7,6 +7,6 @@ public interface TestSessionService {
     boolean hasActiveTestSession(long userId);
     void createForUserAndTest(long userId, long testId);
     void save(TestSessionDto session);
-    void increaseScore(long id);
-    void deleteById(long id);
+    void increaseScore(long userId);
+    void deleteByUserId(long userId);
 }

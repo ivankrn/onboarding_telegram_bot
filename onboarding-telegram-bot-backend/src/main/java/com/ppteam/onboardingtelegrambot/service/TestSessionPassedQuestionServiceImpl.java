@@ -16,8 +16,8 @@ public class TestSessionPassedQuestionServiceImpl implements TestSessionPassedQu
     private final MapStructMapper mapStructMapper;
 
     @Override
-    public List<TestSessionPassedQuestionDto> findBySessionId(long sessionId) {
-        return testSessionPassedQuestionRepository.findByTestSessionId(sessionId).stream()
+    public List<TestSessionPassedQuestionDto> findByUserId(long userId) {
+        return testSessionPassedQuestionRepository.findByTestSessionUserId(userId).stream()
                 .map(mapStructMapper::passedQuestionToPassedQuestionDto).collect(Collectors.toList());
     }
 

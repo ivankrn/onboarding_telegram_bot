@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface TestSessionPassedQuestionRepository extends CrudRepository<TestSessionPassedQuestion, Long> {
-    List<TestSessionPassedQuestion> findByTestSessionId(long sessionId);
+    List<TestSessionPassedQuestion> findByTestSessionUserId(long userId);
 }

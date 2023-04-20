@@ -228,7 +228,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private void sendTestQuestion(long chatId, long userId, long questionId, long answerId) {
         TestSessionDto session = testSessionService.findByUserId(userId);
         List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
-        List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findBySessionId(session.getId());
+        List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findByUserId(session.getUserId());
         if (testQuestionService.exists(questionId)) {
             if (didUserAnswerQuestionBefore(passedQuestions, questionId)) {
                 sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
@@ -237,7 +237,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             TestQuestionDto previousQuestion = testQuestionService.findById(questionId);
             TestAnswerDto correctAnswer = testAnswerService.getCorrectAnswerForQuestionId(previousQuestion.getId());
             if (isUserAnswerCorrect(correctAnswer, answerId)) {
-                testSessionService.increaseScore(session.getId());
+                testSessionService.increaseScore(session.getUserId());
                 session.setScore(session.getScore() + 1);
             }
             TestSessionPassedQuestionDto passedQuestion = new TestSessionPassedQuestionDto();
@@ -254,7 +254,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(testQuestionService.findByIdWithAnswers(nextQuestion.getId())));
         } else {
             message.setText("Ваш счет: " + session.getScore());
-            testSessionService.deleteById(session.getId());
+            testSessionService.deleteByUserId(session.getUserId());
             testStatisticService.updateForTest(session.getTestId(), session.getScore());
         }
         executeMessageWithLogging(message);

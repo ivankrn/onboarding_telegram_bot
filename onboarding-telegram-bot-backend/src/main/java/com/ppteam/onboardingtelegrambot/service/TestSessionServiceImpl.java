@@ -28,10 +28,12 @@ public class TestSessionServiceImpl implements TestSessionService {
 
     @Override
     public void createForUserAndTest(long userId, long testId) {
-        TestSession session = new TestSession();
-        session.setUserId(userId);
-        session.setTestId(testId);
-        testSessionRepository.save(session);
+        if (!testSessionRepository.existsById(userId)) {
+            TestSession session = new TestSession();
+            session.setUserId(userId);
+            session.setTestId(testId);
+            testSessionRepository.save(session);
+        }
     }
 
     @Override
@@ -41,12 +43,12 @@ public class TestSessionServiceImpl implements TestSessionService {
 
     @Override
     @Transactional
-    public void increaseScore(long id) {
-        testSessionRepository.increaseScore(id);
+    public void increaseScore(long userId) {
+        testSessionRepository.increaseScore(userId);
     }
 
     @Override
-    public void deleteById(long id) {
-        testSessionRepository.deleteById(id);
+    public void deleteByUserId(long userId) {
+        testSessionRepository.deleteById(userId);
     }
 }
