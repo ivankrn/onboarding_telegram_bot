@@ -222,7 +222,24 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private void beginTestById(long chatId, long userId, long testId) {
         testSessionService.createForUserAndTest(userId, testId);
-        sendTestQuestion(chatId, userId, -1, -1);
+        sendFirstTestQuestion(chatId, userId);
+    }
+
+    private void sendFirstTestQuestion(long chatId, long userId) {
+        TestSessionDto session = testSessionService.findByUserId(userId);
+        List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        if (!questions.isEmpty()) {
+            TestQuestionDto nextQuestion = questions.get(0);
+            message.setText(nextQuestion.getQuestion());
+            message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(testQuestionService.findByIdWithAnswers(nextQuestion.getId())));
+        } else {
+            message.setText("Ваш счет: " + session.getScore());
+            testSessionService.deleteByUserId(session.getUserId());
+            testStatisticService.updateForTest(session.getTestId(), session.getScore());
+        }
+        executeMessageWithLogging(message);
     }
 
     private void sendTestQuestion(long chatId, long userId, long questionId, long answerId) {
@@ -230,7 +247,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
         List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findByUserId(session.getUserId());
         if (testQuestionService.exists(questionId)) {
-            if (didUserAnswerQuestionBefore(passedQuestions, questionId)) {
+            if (didUserAnswerQuestionBefore(passedQuestions, questionId)
+                    || !doQuestionsContainQuestionWithId(questions, questionId)) {
                 sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
                 return;
             }
@@ -258,6 +276,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             testStatisticService.updateForTest(session.getTestId(), session.getScore());
         }
         executeMessageWithLogging(message);
+    }
+
+    private boolean doQuestionsContainQuestionWithId(List<TestQuestionDto> questions, long questionId) {
+        return questions.stream().anyMatch(q -> q.getId() == questionId);
     }
 
     private boolean didUserAnswerQuestionBefore(List<TestSessionPassedQuestionDto> passedQuestions, long questionId) {
