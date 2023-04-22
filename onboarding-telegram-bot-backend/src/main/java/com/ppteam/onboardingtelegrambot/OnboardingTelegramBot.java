@@ -143,7 +143,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             case CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID:
                 long questionId = Integer.parseInt(receivedMessage.split(" ")[1]);
                 long answerId = Integer.parseInt(receivedMessage.split(" ")[3]);
-                sendTestQuestion(chatId, userId, questionId, answerId);
+                processTestAnswer(chatId, userId, questionId, answerId);
                 break;
         }
     }
@@ -228,21 +228,11 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private void sendFirstTestQuestion(long chatId, long userId) {
         TestSessionDto session = testSessionService.findByUserId(userId);
         List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        if (!questions.isEmpty()) {
-            TestQuestionDto nextQuestion = questions.get(0);
-            message.setText(nextQuestion.getQuestion());
-            message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(testQuestionService.findByIdWithAnswers(nextQuestion.getId())));
-        } else {
-            message.setText("Ваш счет: " + session.getScore());
-            testSessionService.deleteByUserId(session.getUserId());
-            testStatisticService.updateForTest(session.getTestId(), session.getScore());
-        }
-        executeMessageWithLogging(message);
+        TestQuestionDto question = questions.get(0);
+        sendTestQuestion(chatId, testQuestionService.findByIdWithAnswers(question.getId()));
     }
 
-    private void sendTestQuestion(long chatId, long userId, long questionId, long answerId) {
+    private void processTestAnswer(long chatId, long userId, long questionId, long answerId) {
         TestSessionDto session = testSessionService.findByUserId(userId);
         List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
         List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findByUserId(session.getUserId());
@@ -264,17 +254,24 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             testSessionPassedQuestionService.save(passedQuestion);
             passedQuestions.add(passedQuestion);
         }
+        if (passedQuestions.size() < questions.size()) {
+            sendNextTestQuestion(chatId, questions, passedQuestions);
+        } else {
+            endTest(chatId, session);
+        }
+    }
+
+    private void sendNextTestQuestion(long chatId, List<TestQuestionDto> questions,
+                                      List<TestSessionPassedQuestionDto> passedQuestions) {
+        TestQuestionDto nextQuestion = getNextUnansweredQuestion(questions, passedQuestions);
+        sendTestQuestion(chatId, testQuestionService.findByIdWithAnswers(nextQuestion.getId()));
+    }
+
+    private void sendTestQuestion(long chatId, TestQuestionFullDto question) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        if (passedQuestions.size() < questions.size()) {
-            TestQuestionDto nextQuestion = getNextUnansweredQuestion(questions, passedQuestions);
-            message.setText(nextQuestion.getQuestion());
-            message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(testQuestionService.findByIdWithAnswers(nextQuestion.getId())));
-        } else {
-            message.setText("Ваш счет: " + session.getScore());
-            testSessionService.deleteByUserId(session.getUserId());
-            testStatisticService.updateForTest(session.getTestId(), session.getScore());
-        }
+        message.setText(question.getQuestion());
+        message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question));
         executeMessageWithLogging(message);
     }
 
@@ -298,6 +295,19 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             }
         }
         return null;
+    }
+
+    private void endTest(long chatId, TestSessionDto session) {
+        sendTestResults(chatId, session);
+        testSessionService.deleteByUserId(session.getUserId());
+        testStatisticService.updateForTest(session.getTestId(), session.getScore());
+    }
+
+    private void sendTestResults(long chatId, TestSessionDto session) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("Ваш счет: " + session.getScore());
+        executeMessageWithLogging(message);
     }
 
     private void sendText(long chatId, String text) {
