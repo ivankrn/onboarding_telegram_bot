@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: 'tests', component: TestListComponent },
   { path: 'tests/edit/:id', component: TestFormComponent },
   { path: 'tests/create', component: TestFormComponent },
+  { path: '', redirectTo: 'statistics', pathMatch: 'full' },
   { path: '**', component: StatisticsComponent }
 ];
 
