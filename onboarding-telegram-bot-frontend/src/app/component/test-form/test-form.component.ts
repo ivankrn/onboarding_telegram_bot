@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, Subscription } from 'rxjs';
-import { Article } from 'src/app/model/article';
+import { Observable, Subscription } from 'rxjs';
 import { Test } from 'src/app/model/test';
-import { TestQuestion } from 'src/app/model/test-question';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { TestService } from 'src/app/service/test.service';
 
@@ -31,7 +29,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, private router: Router, private testService: TestService,
     private articleTopicService: ArticleTopicService) {
-    this.test = new Test();
+    this.test = <Test>{};
     this.updateTopics();
   }
 

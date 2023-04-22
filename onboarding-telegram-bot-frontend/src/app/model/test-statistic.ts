@@ -1,6 +1,6 @@
 import { Test } from "./test";
 
-export class TestStatistic {
+export interface TestStatistic {
     id: number;
     test: Test;
     correctAnswersCount: number;

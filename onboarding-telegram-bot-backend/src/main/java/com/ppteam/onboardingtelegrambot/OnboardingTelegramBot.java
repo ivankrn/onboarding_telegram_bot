@@ -99,7 +99,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             command = receivedMessage.split(" ")[0];
         }
         if (!command.equals(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID)
-                && this.testSessionService.hasActiveTestSession(userId)) {
+                && testSessionService.hasActiveTestSession(userId)) {
             sendText(chatId, "Пожалуйста, завершите тест, прежде чем использовать меню");
             return;
         }

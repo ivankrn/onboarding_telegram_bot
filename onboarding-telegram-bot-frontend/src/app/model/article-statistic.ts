@@ -1,6 +1,6 @@
 import { Article } from "./article";
 
-export class ArticleStatistic {
+export interface ArticleStatistic {
     id: number;
     article: Article;
     ratingsSum: number;

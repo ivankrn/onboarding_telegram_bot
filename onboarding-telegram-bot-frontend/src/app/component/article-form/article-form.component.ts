@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Article } from 'src/app/model/article';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
@@ -35,7 +35,7 @@ export class ArticleFormComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, 
     private articleService: ArticleService, private articleTopicService: ArticleTopicService, private testService: TestService) {
-    this.article = new Article();
+    this.article = <Article>{};
     this.updateTopics();
     this.updateTests();
   }

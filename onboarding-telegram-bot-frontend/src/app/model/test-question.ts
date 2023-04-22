@@ -1,7 +1,7 @@
 import { Test } from "./test";
 import { TestAnswer } from "./test-answer";
 
-export class TestQuestion {
+export interface TestQuestion {
     id: number;
     test: Test;
     question: string;

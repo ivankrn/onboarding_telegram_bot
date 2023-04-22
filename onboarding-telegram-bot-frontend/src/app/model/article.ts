@@ -1,7 +1,7 @@
 import { ArticleTopic } from "./article-topic";
 import { Test } from "./test";
 
-export class Article {
+export interface Article {
     id: number;
     topic: ArticleTopic;
     title: string;
