@@ -53,11 +53,13 @@ export class ArticleFormComponent implements OnInit {
   }
 
   public onSubmit() {
-    this.article = Object.assign(this.article, this.form.value);
-    if (this.form.value.test!.id == null) {
-      this.article.test = undefined;
+    if (this.form.valid) {
+      this.article = Object.assign(this.article, this.form.value);
+      if (this.form.value.test!.id == null) {
+        this.article.test = undefined;
+      }
+      this.articleService.save(this.article).subscribe(() => this.goToArticleList());
     }
-    this.articleService.save(this.article).subscribe(() => this.goToArticleList());
   }
 
   public goToArticleList() {

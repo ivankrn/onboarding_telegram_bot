@@ -62,8 +62,10 @@ export class TestFormComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit() {
-    this.test = Object.assign(this.test, this.form.value);
-    this.testService.save(this.test).subscribe(() => this.goToTestList());
+    if (this.form.valid) {
+      this.test = Object.assign(this.test, this.form.value);
+      this.testService.save(this.test).subscribe(() => this.goToTestList());
+    }
   }
 
   public goToTestList() {
