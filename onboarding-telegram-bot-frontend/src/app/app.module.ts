@@ -15,6 +15,7 @@ import { PaginationModule } from './pagination/pagination/pagination.module';
 import { TestService } from './service/test.service';
 import { TestStatisticsComponent } from './component/statistics/test-statistics/test-statistics.component';
 import { ArticleStatisticsComponent } from './component/statistics/article-statistics/article-statistics.component';
+import { AlertModule } from './alert/alert.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ArticleStatisticsComponent } from './component/statistics/article-stati
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    PaginationModule
+    PaginationModule,
+    AlertModule
   ],
   providers: [ArticleService, TestService],
   bootstrap: [AppComponent]

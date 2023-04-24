@@ -62,3 +62,11 @@
   font-weight: bold;
   border: none;
 }
+
+#alerts {
+  position:fixed; 
+  bottom: 0; 
+  right: 1%; 
+  width: 20%;
+  z-index:9999;
+}

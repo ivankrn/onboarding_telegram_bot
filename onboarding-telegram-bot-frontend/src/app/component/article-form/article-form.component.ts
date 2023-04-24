@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { AlertService } from 'src/app/alert/service/alert.service';
 import { Article } from 'src/app/model/article';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
@@ -34,7 +35,8 @@ export class ArticleFormComponent implements OnInit {
   });
 
   constructor(private route: ActivatedRoute, private router: Router, 
-    private articleService: ArticleService, private articleTopicService: ArticleTopicService, private testService: TestService) {
+    private articleService: ArticleService, private articleTopicService: ArticleTopicService, 
+    private testService: TestService, private alertService: AlertService) {
     this.article = <Article>{};
     this.updateTopics();
     this.updateTests();
@@ -58,7 +60,14 @@ export class ArticleFormComponent implements OnInit {
       if (this.form.value.test!.id == null) {
         this.article.test = undefined;
       }
-      this.articleService.save(this.article).subscribe(() => this.goToArticleList());
+      this.articleService.save(this.article).subscribe({
+        next: () => {
+          const successMessage = this.articleId === undefined ? "Статья успешно добавлена!" : "Статья успешно изменена!";
+          this.alertService.success(successMessage);
+          this.goToArticleList();
+        },
+        error: () => this.alertService.error("Произошла ошибка при добавлении статьи!"),
+      });
     }
   }
 

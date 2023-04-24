@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { AlertService } from 'src/app/alert/service/alert.service';
 import { Test } from 'src/app/model/test';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { TestService } from 'src/app/service/test.service';
@@ -28,7 +29,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   });
 
   constructor(private route: ActivatedRoute, private router: Router, private testService: TestService,
-    private articleTopicService: ArticleTopicService) {
+    private articleTopicService: ArticleTopicService, private alertService: AlertService) {
     this.test = <Test>{};
     this.updateTopics();
   }
@@ -64,7 +65,14 @@ export class TestFormComponent implements OnInit, OnDestroy {
   public onSubmit() {
     if (this.form.valid) {
       this.test = Object.assign(this.test, this.form.value);
-      this.testService.save(this.test).subscribe(() => this.goToTestList());
+      this.testService.save(this.test).subscribe({
+        next: () => {
+          const successMessage = this.testId === undefined ? "Тест успешно добавлен!" : "Тест успешно изменён!";
+          this.alertService.success(successMessage);
+          this.goToTestList();
+        },
+        error: () => this.alertService.error("Произошла ошибка при добавлении теста!"),
+      });
     }
   }
 
