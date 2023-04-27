@@ -1,5 +1,5 @@
 <div class="d-flex" id="wrapper">
-  <div class="bg-white" id="sidebar-wrapper">
+  <div class="bg-white" id="sidebar-wrapper" [ngClass]="{'opened': isSidebarOpen}">
     <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
       <i class="fas fa-robot me-2"></i>{{title}}
     </div>
@@ -13,12 +13,10 @@
       <a routerLink="/tests" routerLinkActive="active" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
         <i class="fas fa-note-sticky me-2"></i>Тесты
       </a>
-      <!-- <a routerLink="/tests" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold">
-        <i class="fas fa-project-diagram me-2"></i>Выйти
-      </a> -->
     </div>
   </div>
   <div id="page-content-wrapper">
+    <button type="button" class="btn" (click)="toggleSidebar()"><i class="fas fa-bars"></i></button>
     <div class="container-fluid px-4 my-5">
       <router-outlet></router-outlet>
       <app-alert id="alerts"></app-alert>
