@@ -16,7 +16,7 @@
       <tr *ngFor="let article of articles">
         <td>{{ (articleTopics | async)?.get(article.topic.id) }}</td>
         <td>{{ article.title }}</td>
-        <td>{{ article.content }}</td>
+        <td class="article-content">{{ article.content }}</td>
         <td>{{ article.usefulLinks }}</td>
         <td *ngIf="article.test">Да</td>
         <td *ngIf="!article.test">Нет</td>
