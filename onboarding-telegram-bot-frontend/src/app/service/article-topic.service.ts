@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class ArticleTopicService {
 
-  private apiUrl: string = "http://localhost:8080/api/article_topics";
+  private apiUrl: string = "http://localhost:8080/api/article-topics";
 
   constructor(private httpClient: HttpClient) {}
 

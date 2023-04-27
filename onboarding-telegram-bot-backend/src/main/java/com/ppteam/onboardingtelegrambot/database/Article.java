@@ -29,7 +29,8 @@ public class Article {
     @OneToOne
     @JoinColumn(name = "test_id")
     private Test test;
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false,
+            columnDefinition = "timestamp with time zone default current_timestamp")
     private OffsetDateTime createdAt;
     @OneToOne(mappedBy = "article", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private ArticleStatistic statistic;

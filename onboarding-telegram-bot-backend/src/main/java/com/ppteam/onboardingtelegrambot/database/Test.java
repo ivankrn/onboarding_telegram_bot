@@ -34,7 +34,8 @@ public class Test {
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<TestQuestion> questions = new HashSet<>();
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false,
+            columnDefinition = "timestamp with time zone default current_timestamp")
     private OffsetDateTime createdAt;
     @OneToOne(mappedBy = "test", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private TestStatistic statistic;
