@@ -1,0 +1,7 @@
+<span *ngIf="text.length <= charLimit">{{text}}</span>
+<span *ngIf="text.length > charLimit && !isExpanded">
+    {{ text | slice:0:charLimit }}...<br><span class="text-muted switch-button" (click)="switchTextState()">Читать далее</span>
+</span>
+<span *ngIf="text.length > charLimit && isExpanded">
+    {{ text }}<br><span class="text-muted switch-button" (click)="switchTextState()">Свернуть</span>
+</span>

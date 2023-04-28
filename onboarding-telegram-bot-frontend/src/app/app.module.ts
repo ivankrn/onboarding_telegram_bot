@@ -17,6 +17,7 @@ import { TestService } from './service/test.service';
 import { TestStatisticsComponent } from './component/statistics/test-statistics/test-statistics.component';
 import { ArticleStatisticsComponent } from './component/statistics/article-statistics/article-statistics.component';
 import { AlertModule } from './alert/alert.module';
+import { TextReadMoreComponent } from './component/text-read-more/text-read-more.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { AlertModule } from './alert/alert.module';
     TestFormComponent,
     TestStatisticsComponent,
     ArticleStatisticsComponent,
+    TextReadMoreComponent,
   ],
   imports: [
     BrowserModule,
