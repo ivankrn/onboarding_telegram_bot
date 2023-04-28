@@ -66,7 +66,11 @@ export class ArticleFormComponent implements OnInit {
           this.alertService.success(successMessage);
           this.goToArticleList();
         },
-        error: () => this.alertService.error("Произошла ошибка при добавлении статьи!"),
+        error: () => {
+          const errorMessage = this.articleId === undefined 
+          ? "Произошла ошибка при добавлении статьи!" : "Произошла ошибка при изменении статьи!";
+          this.alertService.error(errorMessage);
+        },
       });
     }
   }

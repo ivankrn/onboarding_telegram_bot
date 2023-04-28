@@ -71,7 +71,11 @@ export class TestFormComponent implements OnInit, OnDestroy {
           this.alertService.success(successMessage);
           this.goToTestList();
         },
-        error: () => this.alertService.error("Произошла ошибка при добавлении теста!"),
+        error: () => {
+          const errorMessage = this.testId === undefined 
+          ? "Произошла ошибка при добавлении теста!" : "Произошла ошибка при изменении теста!";
+          this.alertService.error(errorMessage);
+        },
       });
     }
   }
