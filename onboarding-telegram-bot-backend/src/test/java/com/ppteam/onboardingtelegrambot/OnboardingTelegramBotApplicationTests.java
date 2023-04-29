@@ -3,7 +3,7 @@ package com.ppteam.onboardingtelegrambot;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = OnboardingTelegramBotApplicationTests.class)
 class OnboardingTelegramBotApplicationTests {
 
 	@Test
