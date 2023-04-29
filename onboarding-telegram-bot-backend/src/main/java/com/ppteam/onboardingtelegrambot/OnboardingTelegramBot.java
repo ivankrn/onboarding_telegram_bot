@@ -270,9 +270,23 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     private void sendTestQuestion(long chatId, TestQuestionFullDto question) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(question.getQuestion());
+        message.setText(formatTestQuestion(question));
         message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question));
         executeMessageWithLogging(message);
+    }
+
+    private String formatTestQuestion(TestQuestionFullDto question) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(question.getQuestion());
+        stringBuilder.append("\n\n");
+        stringBuilder.append("\u2705 Варианты ответа:\n\n");
+        for (int i = 0; i < question.getAnswers().size(); i++) {
+            stringBuilder.append(i + 1);
+            stringBuilder.append(") ");
+            stringBuilder.append(question.getAnswers().get(i).getAnswer());
+            stringBuilder.append("\n\n");
+        }
+        return stringBuilder.toString();
     }
 
     private boolean doQuestionsContainQuestionWithId(List<TestQuestionDto> questions, long questionId) {

@@ -125,10 +125,10 @@ public class Buttons {
 
     public static InlineKeyboardMarkup testAnswerChoiceMarkup(TestQuestionFullDto question) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        for (TestAnswerDto answer : question.getAnswers()) {
-            InlineKeyboardButton button = new InlineKeyboardButton(answer.getAnswer());
+        for (int i = 0; i < question.getAnswers().size(); i++) {
+            InlineKeyboardButton button = new InlineKeyboardButton(String.valueOf(i + 1));
             button.setCallbackData(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID + " " + question.getId() + " "
-                    + CallbackQueryCommand.ANSWER + " " + answer.getId());
+                    + CallbackQueryCommand.ANSWER + " " + question.getAnswers().get(i).getId());
             rows.add(List.of(button));
         }
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();

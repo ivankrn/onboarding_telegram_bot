@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class TestQuestionFullDto {
@@ -12,5 +12,5 @@ public class TestQuestionFullDto {
     @NotBlank
     private String question;
     @NotEmpty
-    private Set<TestAnswerDto> answers;
+    private List<TestAnswerDto> answers;
 }
