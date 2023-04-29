@@ -25,7 +25,7 @@
                             <label>Название вопроса:</label>
                             <input type="text" formControlName="question" class="form-control">
                         </div>
-                        <div class="form-group" formArrayName="answers">
+                        <div class="form-group my-2" formArrayName="answers">
                             <p>Ответы:</p>
                             <ul class="list-group" *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let answerIndex=index">
                                 <li class="list-group-item my-3" [formGroupName]="answerIndex">
@@ -38,7 +38,7 @@
                                     </div>
                                 </li>
                             </ul>
-                            <button type="button" (click)="addAnswerToId(questionIndex)" class="btn btn-success">Добавить ответ</button>
+                            <button type="button" (click)="addAnswerToId(questionIndex)" class="btn btn-success float-end">Добавить ответ</button>
                         </div>
                     </li>
                 </ul>
