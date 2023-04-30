@@ -19,18 +19,18 @@
 
 1. Клонируйте репозиторий:
 
-```console
+```bash
 git clone https://github.com/ivankrn/onboarding_telegram_bot.git
 ```
 
 2. Установите зависимости для frontend:
-```console
+```bash
 cd onboarding-telegram-bot-frontend
 npm install
 ```
 
 3. Установите зависимости для backend:
-```console
+```bash
 cd onboarding-telegram-bot-backend
 mvn install
 ```
@@ -52,13 +52,13 @@ spring.datasource.password = пароль_вашей_базы_данных
 ```
 
 5. Запустите frontend:
-```console
+```bash
 cd onboarding-telegram-bot-frontend
 ng serve
 ```
 
 6. Запустите backend:
-```console
+```bash
 cd onboarding-telegram-bot-backend
 mvn spring-boot:run
 ```
