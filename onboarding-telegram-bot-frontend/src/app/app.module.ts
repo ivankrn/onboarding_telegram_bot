@@ -18,6 +18,8 @@ import { TestStatisticsComponent } from './component/statistics/test-statistics/
 import { ArticleStatisticsComponent } from './component/statistics/article-statistics/article-statistics.component';
 import { AlertModule } from './alert/alert.module';
 import { TextReadMoreComponent } from './component/text-read-more/text-read-more.component';
+import { ModalComponent } from './component/modal/modal.component';
+import { ArticleTopicFormComponent } from './component/article-topic-form/article-topic-form.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { TextReadMoreComponent } from './component/text-read-more/text-read-more
     TestStatisticsComponent,
     ArticleStatisticsComponent,
     TextReadMoreComponent,
+    ModalComponent,
+    ArticleTopicFormComponent,
   ],
   imports: [
     BrowserModule,

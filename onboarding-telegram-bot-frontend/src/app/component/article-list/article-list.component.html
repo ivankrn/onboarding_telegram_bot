@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let article of articles">
-        <td>{{ (articleTopics | async)?.get(article.topic.id) }}</td>
+        <td>{{ article.topic.name }}</td>
         <td>{{ article.title }}</td>
         <td class="article-content">
           <app-text-read-more [text]="article.content" [charLimit]="300"></app-text-read-more>

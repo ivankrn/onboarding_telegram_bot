@@ -4,12 +4,16 @@ package com.ppteam.onboardingtelegrambot.database;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.OffsetDateTime;
 
 @Data
 @Entity
 @Table(name = "article")
+@EqualsAndHashCode(exclude = "statistic")
+@ToString(exclude = "statistic")
 public class Article {
     @Id
     @SequenceGenerator(name = "article_id_seq", sequenceName = "article_id_seq", allocationSize = 1)

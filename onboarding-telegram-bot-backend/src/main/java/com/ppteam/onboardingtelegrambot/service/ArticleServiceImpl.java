@@ -38,6 +38,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void save(ArticleDto article) {
+        System.out.println(article.getId());
+        System.out.println(article.getTitle());
         articleRepository.save(mapStructMapper.articleDtoToArticle(article));
     }
 

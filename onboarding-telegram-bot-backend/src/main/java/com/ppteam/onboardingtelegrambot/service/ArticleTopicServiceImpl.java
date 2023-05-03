@@ -20,4 +20,14 @@ public class ArticleTopicServiceImpl implements ArticleTopicService {
     public List<ArticleTopicDto> findAll() {
         return articleTopicRepository.findAll().stream().map(mapStructMapper::topicToTopicDto).collect(Collectors.toList());
     }
+
+    @Override
+    public void save(ArticleTopicDto topicDto) {
+        articleTopicRepository.save(mapStructMapper.topicDtoToTopic(topicDto));
+    }
+
+    @Override
+    public void deleteById(long id) {
+        articleTopicRepository.deleteById(id);
+    }
 }

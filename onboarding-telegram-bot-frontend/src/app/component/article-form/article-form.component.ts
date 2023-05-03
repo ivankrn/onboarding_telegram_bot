@@ -4,8 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AlertService } from 'src/app/alert/service/alert.service';
 import { Article } from 'src/app/model/article';
+import { ArticleTopic } from 'src/app/model/article-topic';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
+import { ModalService } from 'src/app/service/modal.service';
 import { TestService } from 'src/app/service/test.service';
 
 @Component({
@@ -18,7 +20,7 @@ export class ArticleFormComponent implements OnInit {
   articleId: number | undefined;
   paramsSub: Subscription;
   article: Article;
-  articleTopics: Observable<Map<number, string>>;
+  articleTopics: ArticleTopic[];
   tests: Observable<Map<number, string>>;
   form = new FormGroup({
     title: new FormControl("", Validators.required),
@@ -36,7 +38,8 @@ export class ArticleFormComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, 
     private articleService: ArticleService, private articleTopicService: ArticleTopicService, 
-    private testService: TestService, private alertService: AlertService) {
+    private testService: TestService, private alertService: AlertService,
+    private modalService: ModalService) {
     this.article = <Article>{};
     this.updateTopics();
     this.updateTests();
@@ -80,10 +83,21 @@ export class ArticleFormComponent implements OnInit {
   }
 
   updateTopics() {
-    this.articleTopics = this.articleTopicService.getTopicsNames();
+    this.articleTopicService.findAll().subscribe(data => this.articleTopics = data);
   }
 
   updateTests() {
     this.tests = this.testService.getTestsNames();
+  }
+
+  openTopicPopup() {
+    this.modalService.open("topic-popup");
+  }
+  
+  updateTopicsAfterTopicDeletion(deletedTopicId: number) {
+    this.articleTopics = this.articleTopics.filter(topic => topic.id !== deletedTopicId);
+    if (this.article.topic && this.articleTopics.find(topic => topic.id === this.article.topic.id) === undefined) {
+      this.goToArticleList();
+    }
   }
 }

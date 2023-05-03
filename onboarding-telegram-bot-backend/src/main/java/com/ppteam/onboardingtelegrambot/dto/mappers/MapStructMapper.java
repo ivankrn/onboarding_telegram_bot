@@ -20,6 +20,7 @@ public interface MapStructMapper {
     ArticleDto articleToArticleDto(Article article);
     Article articleDtoToArticle(ArticleDto articleDto);
     ArticleTopicDto topicToTopicDto(ArticleTopic articleTopic);
+    ArticleTopic topicDtoToTopic(ArticleTopicDto articleTopicDto);
 
     TestStatisticDto testStatisticToTestStatisticDto(TestStatistic testStatistic);
     TestStatistic testStatisticDtoToTestStatistic(TestStatisticDto testStatisticDto);

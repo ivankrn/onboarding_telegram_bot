@@ -8,9 +8,15 @@
       <div class="form-group" formGroupName="topic">
         <label for="id">Тема:</label>
         <select class="form-select" formControlName="id">
-          <option *ngFor="let topic of articleTopics | async | keyvalue" [ngValue]="topic.key">{{topic.value}}</option>
+          <option *ngFor="let topic of articleTopics" [ngValue]="topic.id">{{topic.name}}</option>
         </select>
       </div>
+      <div class="text-muted mt-2 mb-3">
+        <span id="topic-add-suggestion" (click)="openTopicPopup()">Не нашли подходящей темы? Добавьте новую</span>
+      </div>
+      <app-modal id="topic-popup" (onClose)="updateTopics()">
+        <app-article-topic-form (deletedTopicId)="updateTopicsAfterTopicDeletion($event)"></app-article-topic-form>
+      </app-modal>
       <div class="form-group">
         <label for="content">Текст:</label>
         <textarea id="content" formControlName="content" class="form-control" rows="10"></textarea>

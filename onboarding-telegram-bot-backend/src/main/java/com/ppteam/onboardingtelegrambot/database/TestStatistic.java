@@ -3,10 +3,14 @@ package com.ppteam.onboardingtelegrambot.database;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "test_statistic")
+@EqualsAndHashCode(exclude = "test")
+@ToString(exclude = "test")
 public class TestStatistic {
     @Id
     private long id;

@@ -15,9 +15,9 @@ import java.util.Set;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = "questions")
-@ToString(exclude = "questions")
 @Table(name = "test")
+@EqualsAndHashCode(exclude = {"questions", "statistic"})
+@ToString(exclude = {"questions", "statistic"})
 public class Test {
     @Id
     @SequenceGenerator(name = "test_id_seq", sequenceName = "test_id_seq", allocationSize = 1)

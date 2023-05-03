@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Article } from 'src/app/model/article';
+import { ArticleTopic } from 'src/app/model/article-topic';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ArticleService } from 'src/app/service/article.service';
 
@@ -16,7 +16,7 @@ export class ArticleListComponent implements OnInit {
   showLimit: number = 10;
 
   articles: Article[];
-  articleTopics: Observable<Map<number, string>>;
+  articleTopics: ArticleTopic[];
 
   constructor(private articleService: ArticleService, private articleTopicService: ArticleTopicService) {}
 
@@ -39,7 +39,7 @@ export class ArticleListComponent implements OnInit {
   }
 
   updateTopics() {
-    this.articleTopics = this.articleTopicService.getTopicsNames();
+    this.articleTopicService.findAll().subscribe(data => this.articleTopics = data);
   }
 
   changePage(pageNumber: number) {

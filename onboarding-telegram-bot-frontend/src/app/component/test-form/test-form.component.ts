@@ -3,8 +3,10 @@ import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AlertService } from 'src/app/alert/service/alert.service';
+import { ArticleTopic } from 'src/app/model/article-topic';
 import { Test } from 'src/app/model/test';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
+import { ModalService } from 'src/app/service/modal.service';
 import { TestService } from 'src/app/service/test.service';
 
 @Component({
@@ -17,7 +19,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   testId: number | undefined;
   paramsSub: Subscription;
   test: Test;
-  articleTopics: Observable<Map<number, string>>;
+  articleTopics: ArticleTopic[];
   form = new FormGroup({
     title: new FormControl("", Validators.required),
     description: new FormControl(""),
@@ -29,7 +31,8 @@ export class TestFormComponent implements OnInit, OnDestroy {
   });
 
   constructor(private route: ActivatedRoute, private router: Router, private testService: TestService,
-    private articleTopicService: ArticleTopicService, private alertService: AlertService) {
+    private articleTopicService: ArticleTopicService, private alertService: AlertService,
+    private modalService: ModalService) {
     this.test = <Test>{};
     this.updateTopics();
   }
@@ -85,7 +88,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   }
 
   updateTopics() {
-    this.articleTopics = this.articleTopicService.getTopicsNames();
+    this.articleTopicService.findAll().subscribe(data => this.articleTopics = data);
   }
 
   get questions() {
@@ -116,5 +119,16 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   deleteAnswerById(questionId: number, answerId: number) {
     this.getAnswersByQuestionId(questionId).removeAt(answerId);
+  }
+
+  openTopicPopup() {
+    this.modalService.open("topic-popup");
+  }
+  
+  updateTopicsAfterTopicDeletion(deletedTopicId: number) {
+    this.articleTopics = this.articleTopics.filter(topic => topic.id !== deletedTopicId);
+    if (this.test.topic && this.articleTopics.find(topic => topic.id === this.test.topic.id) === undefined) {
+      this.goToTestList();
+    }
   }
 }
