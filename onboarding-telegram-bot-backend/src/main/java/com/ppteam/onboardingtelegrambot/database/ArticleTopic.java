@@ -13,7 +13,7 @@ import lombok.Data;
 public class ArticleTopic {
     @Id
     private long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank
     private String name;
 }
