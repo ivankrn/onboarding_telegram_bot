@@ -1,6 +1,5 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
-import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
 import com.ppteam.onboardingtelegrambot.service.ArticleService;
 import jakarta.validation.Valid;
