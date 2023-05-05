@@ -1,4 +1,5 @@
-<table class="table bg-white table-bordered rounded overflow-hidden">
+<div class="table-container">
+  <table class="table bg-white table-bordered rounded overflow-hidden">
     <thead class="table-light">
       <tr>
         <th scope="col">Тест</th>
@@ -13,12 +14,13 @@
         <td>{{ statistic.correctAnswersCount / statistic.totalAnswersCount | percent }}</td>
       </tr>
     </tbody>
-</table>
-<div *ngIf="statistics">
-    <pagination
-      [currentPage]="currentPage + 1"
-      [limit]="showLimit"
-      [total]="totalElements"
-      (changePage)="changePage($event)">
-    </pagination>
+  </table>
+  <div *ngIf="statistics" class="d-flex flex-row-reverse">
+      <pagination
+        [currentPage]="currentPage + 1"
+        [limit]="showLimit"
+        [total]="totalElements"
+        (changePage)="changePage($event)">
+      </pagination>
+  </div>
 </div>

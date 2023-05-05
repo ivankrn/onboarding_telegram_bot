@@ -1,4 +1,5 @@
-<table class="table bg-white table-bordered rounded overflow-hidden">
+<div class="table-container">
+  <table class="table bg-white table-bordered rounded overflow-hidden">
     <thead class="table-light">
       <tr>
         <th scope="col">Статья</th>
@@ -13,12 +14,10 @@
         <td>{{ statistic.ratingsSum / statistic.totalRatingsCount | number: "1.0-2" }}</td>
       </tr>
     </tbody>
-</table>
-<div *ngIf="statistics">
-    <pagination
-      [currentPage]="currentPage + 1"
-      [limit]="showLimit"
-      [total]="totalElements"
+  </table>
+  <div *ngIf="statistics" class="d-flex flex-row-reverse">
+    <pagination [currentPage]="currentPage + 1" [limit]="showLimit" [total]="totalElements"
       (changePage)="changePage($event)">
     </pagination>
+  </div>
 </div>

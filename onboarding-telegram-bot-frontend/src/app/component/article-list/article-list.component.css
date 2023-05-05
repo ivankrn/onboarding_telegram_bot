@@ -1,3 +1,7 @@
 .article-content {
     white-space: pre-wrap;
 }
+
+.table-container {
+    display: table;
+}
