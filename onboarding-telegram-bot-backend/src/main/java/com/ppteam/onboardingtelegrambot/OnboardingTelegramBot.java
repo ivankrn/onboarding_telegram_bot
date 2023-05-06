@@ -2,6 +2,7 @@ package com.ppteam.onboardingtelegrambot;
 
 import com.ppteam.onboardingtelegrambot.components.BotCommands;
 import com.ppteam.onboardingtelegrambot.components.Buttons;
+import com.ppteam.onboardingtelegrambot.components.CommandUtil;
 import com.ppteam.onboardingtelegrambot.config.BotConfig;
 import com.ppteam.onboardingtelegrambot.dto.*;
 import com.ppteam.onboardingtelegrambot.service.*;
@@ -15,12 +16,15 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -69,19 +73,25 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         long chatId = 0;
         long userId = 0;
+        int messageId = 0;
+        InlineKeyboardMarkup previousMarkup;
         String receivedMessage;
         if (update.hasMessage()) {
             chatId = update.getMessage().getChatId();
             userId = update.getMessage().getFrom().getId();
+            messageId = update.getMessage().getMessageId();
+            previousMarkup = update.getMessage().getReplyMarkup();
             if (update.getMessage().hasText()) {
                 receivedMessage = update.getMessage().getText();
-                processAnswer(receivedMessage, chatId, userId);
+                processAnswer(receivedMessage, chatId, userId, messageId, previousMarkup);
             }
         } else if (update.hasCallbackQuery()) {
             chatId = update.getCallbackQuery().getMessage().getChatId();
             userId = update.getCallbackQuery().getFrom().getId();
+            messageId = update.getCallbackQuery().getMessage().getMessageId();
+            previousMarkup = update.getCallbackQuery().getMessage().getReplyMarkup();
             receivedMessage = update.getCallbackQuery().getData();
-            processAnswer(receivedMessage, chatId, userId);
+            processAnswer(receivedMessage, chatId, userId, messageId, previousMarkup);
         }
     }
 
@@ -93,12 +103,13 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void processAnswer(String receivedMessage, long chatId, long userId) {
-        String command = receivedMessage;
-        if (receivedMessage.split(" ").length > 1) {
-            command = receivedMessage.split(" ")[0];
-        }
+    private void processAnswer(String receivedMessage, long chatId, long userId, int messageId,
+                               InlineKeyboardMarkup previousMarkup) {
+        String[] message = CommandUtil.split(receivedMessage);
+        String command = CommandUtil.parseCommand(message);
         if (!command.equals(CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID)
+                && !command.equals(CallbackQueryCommand.MULTIPLE_CHOOSE_FOR_QUESTION_WITH_ID)
+                && !command.equals(CallbackQueryCommand.SELECT_MULTIPLE_FOR_QUESTION_WITH_ID)
                 && testSessionService.hasActiveTestSession(userId)) {
             sendText(chatId, "Пожалуйста, завершите тест, прежде чем использовать меню");
             return;
@@ -114,36 +125,45 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 sendAdminMenu(chatId);
                 break;
             case CallbackQueryCommand.GET_TOPICS:
-                boolean isTestBrowsingMode = receivedMessage.split(" ")[1].equals("test");
+                boolean isTestBrowsingMode = CommandUtil.parseTestBrowsingMode(message);
                 sendTopicChoiceMenu(chatId, isTestBrowsingMode);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLES_BY_TOPIC_ID:
-                long topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                int pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                long topicId = CommandUtil.parseTopicId(message);
+                int pageNumber = CommandUtil.parsePageNumber(message);
                 sendMaterialsByTopicId(chatId, pageNumber, topicId, false);
                 break;
             case CallbackQueryCommand.BROWSE_TESTS_BY_TOPIC_ID:
-                topicId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                pageNumber = Integer.parseInt(receivedMessage.split(" ")[3]);
+                topicId = CommandUtil.parseTopicId(message);
+                pageNumber = CommandUtil.parsePageNumber(message);
                 sendMaterialsByTopicId(chatId, pageNumber, topicId, true);
                 break;
             case CallbackQueryCommand.BROWSE_ARTICLE_BY_ID:
-                long articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long articleId = CommandUtil.parseArticleId(message);
                 sendArticleById(chatId, articleId);
                 break;
             case CallbackQueryCommand.RATE_ARTICLE_BY_ID:
-                articleId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                int rating = Integer.parseInt(receivedMessage.split(" ")[2]);
+                articleId = CommandUtil.parseArticleId(message);
+                int rating = CommandUtil.parseRating(message);
                 rateArticleById(chatId, articleId, rating);
                 break;
             case CallbackQueryCommand.BEGIN_TEST_BY_ID:
-                long testId = Integer.parseInt(receivedMessage.split(" ")[1]);
+                long testId = CommandUtil.parseTestId(message);
                 beginTestById(chatId, userId, testId);
                 break;
             case CallbackQueryCommand.CHOOSE_FOR_QUESTION_WITH_ID:
-                long questionId = Integer.parseInt(receivedMessage.split(" ")[1]);
-                long answerId = Integer.parseInt(receivedMessage.split(" ")[3]);
-                processTestAnswer(chatId, userId, questionId, answerId);
+                long questionId = CommandUtil.parseQuestionId(message);
+                long answerId = CommandUtil.parseAnswerId(message);
+                processTestSingleAnswer(chatId, userId, questionId, answerId);
+                break;
+            case CallbackQueryCommand.MULTIPLE_CHOOSE_FOR_QUESTION_WITH_ID:
+                questionId = CommandUtil.parseQuestionId(message);
+                Set<Long> answersIds = CommandUtil.parseAnswersIds(message);
+                processTestMultipleAnswers(chatId, userId, questionId, answersIds);
+                break;
+            case CallbackQueryCommand.SELECT_MULTIPLE_FOR_QUESTION_WITH_ID:
+                long lastSelectedAnswerId = CommandUtil.parseAnswerId(message);
+                editMultipleAnswersSelection(chatId, messageId, previousMarkup, lastSelectedAnswerId);
                 break;
         }
     }
@@ -232,7 +252,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         sendTestQuestion(chatId, testQuestionService.findByIdWithAnswers(question.getId()));
     }
 
-    private void processTestAnswer(long chatId, long userId, long questionId, long answerId) {
+    private void processTestSingleAnswer(long chatId, long userId, long questionId, long answerId) {
         TestSessionDto session = testSessionService.findByUserId(userId);
         List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
         List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findByUserId(session.getUserId());
@@ -261,6 +281,35 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    private void processTestMultipleAnswers(long chatId, long userId, long questionId, Set<Long> answersIds) {
+        TestSessionDto session = testSessionService.findByUserId(userId);
+        List<TestQuestionDto> questions = testQuestionService.findByTestId(session.getTestId());
+        List<TestSessionPassedQuestionDto> passedQuestions = testSessionPassedQuestionService.findByUserId(session.getUserId());
+        if (testQuestionService.exists(questionId)) {
+            if (didUserAnswerQuestionBefore(passedQuestions, questionId)
+                    || !doQuestionsContainQuestionWithId(questions, questionId)) {
+                sendText(chatId, "Пожалуйста, выберите ответ на текущий вопрос");
+                return;
+            }
+            TestQuestionDto previousQuestion = testQuestionService.findById(questionId);
+            Set<TestAnswerDto> correctAnswers = testAnswerService.getCorrectAnswersForQuestionId(previousQuestion.getId());
+            if (isUserAnswersCorrect(correctAnswers, answersIds)) {
+                testSessionService.increaseScore(session.getUserId());
+                session.setScore(session.getScore() + 1);
+            }
+            TestSessionPassedQuestionDto passedQuestion = new TestSessionPassedQuestionDto();
+            passedQuestion.setQuestionId(previousQuestion.getId());
+            passedQuestion.setTestSession(session);
+            testSessionPassedQuestionService.save(passedQuestion);
+            passedQuestions.add(passedQuestion);
+        }
+        if (passedQuestions.size() < questions.size()) {
+            sendNextTestQuestion(chatId, questions, passedQuestions);
+        } else {
+            endTest(chatId, session);
+        }
+    }
+
     private void sendNextTestQuestion(long chatId, List<TestQuestionDto> questions,
                                       List<TestSessionPassedQuestionDto> passedQuestions) {
         TestQuestionDto nextQuestion = getNextUnansweredQuestion(questions, passedQuestions);
@@ -271,15 +320,36 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(formatTestQuestion(question));
-        message.setReplyMarkup(Buttons.testAnswerChoiceMarkup(question));
+        if (isQuestionWithMultipleCorrectAnswers(question)) {
+            message.setReplyMarkup(Buttons.testAnswerMultipleChoiceMarkup(question));
+        } else {
+            message.setReplyMarkup(Buttons.testAnswerSingleChoiceMarkup(question));
+        }
         executeMessageWithLogging(message);
+    }
+
+    private boolean isQuestionWithMultipleCorrectAnswers(TestQuestionFullDto testQuestion) {
+        return testQuestion.getAnswers().stream().filter(TestAnswerDto::isCorrect).toList().size() > 1;
+    }
+
+    private void editMultipleAnswersSelection(long chatId, int messageId, InlineKeyboardMarkup previousMarkup,
+                                              long lastSelectedAnswerId) {
+        EditMessageReplyMarkup newMessage = new EditMessageReplyMarkup();
+        newMessage.setChatId(chatId);
+        newMessage.setMessageId(messageId);
+        newMessage.setReplyMarkup(Buttons.editTestAnswerMultipleChoiceMarkup(previousMarkup, lastSelectedAnswerId));
+        executeMessageWithLogging(newMessage);
     }
 
     private String formatTestQuestion(TestQuestionFullDto question) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(question.getQuestion());
         stringBuilder.append("\n\n");
-        stringBuilder.append("\u2705 Варианты ответа:\n\n");
+        stringBuilder.append("\u2705 Варианты ответа");
+        if (isQuestionWithMultipleCorrectAnswers(question)) {
+            stringBuilder.append(" (выберите несколько)");
+        }
+        stringBuilder.append(":\n\n");
         for (int i = 0; i < question.getAnswers().size(); i++) {
             stringBuilder.append(i + 1);
             stringBuilder.append(") ");
@@ -299,6 +369,19 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private boolean isUserAnswerCorrect(TestAnswerDto correctAnswer, long userAnswerId) {
         return userAnswerId == correctAnswer.getId();
+    }
+
+    private boolean isUserAnswersCorrect(Set<TestAnswerDto> correctAnswers, Set<Long> userAnswersIds) {
+        int userCorrectAnswersCount = 0;
+        for (long userAnswerId : userAnswersIds) {
+            for (TestAnswerDto correctAnswer : correctAnswers) {
+                if (userAnswerId == correctAnswer.getId()) {
+                    userCorrectAnswersCount++;
+                    break;
+                }
+            }
+        }
+        return correctAnswers.size() == userCorrectAnswersCount;
     }
 
     private TestQuestionDto getNextUnansweredQuestion(List<TestQuestionDto> questions,

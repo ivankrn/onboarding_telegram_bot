@@ -7,6 +7,9 @@ import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class TestAnswerServiceImpl implements TestAnswerService {
@@ -17,5 +20,13 @@ public class TestAnswerServiceImpl implements TestAnswerService {
     public TestAnswerDto getCorrectAnswerForQuestionId(long questionId) {
         return testAnswerRepository.findCorrectAnswerForQuestionId(questionId)
                 .map(mapStructMapper::testAnswerToTestAnswerDto).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Set<TestAnswerDto> getCorrectAnswersForQuestionId(long questionId) {
+        return testAnswerRepository.findCorrectAnswersForQuestionId(questionId)
+                .map(testAnswers ->
+                        testAnswers.stream().map(mapStructMapper::testAnswerToTestAnswerDto).collect(Collectors.toSet())
+                ).orElseThrow(NotFoundException::new);
     }
 }
