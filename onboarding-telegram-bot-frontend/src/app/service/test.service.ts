@@ -25,8 +25,12 @@ export class TestService {
     return this.httpClient.get<number>(this.apiUrl + "/count");
   }
 
-  public save(test: Test) {
+  public create(test: Partial<Test>) {
     return this.httpClient.post<Test>(this.apiUrl, test);
+  }
+
+  public update(id: number, test: Partial<Test>) {
+    return this.httpClient.put<Test>(this.apiUrl + "/" + id, test);
   }
 
   public delete(id: number) {

@@ -25,7 +25,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
     description: new FormControl(""),
     topic: new FormGroup({
       id: new FormControl(null, Validators.required),
-      title: new FormControl()
+      name: new FormControl()
     }),
     questions: new FormArray([], Validators.required)
   });
@@ -67,19 +67,28 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   public onSubmit() {
     if (this.form.valid) {
-      this.test = Object.assign(this.test, this.form.value);
-      this.testService.save(this.test).subscribe({
-        next: () => {
-          const successMessage = this.testId === undefined ? "Тест успешно добавлен!" : "Тест успешно изменён!";
-          this.alertService.success(successMessage);
-          this.goToTestList();
-        },
-        error: () => {
-          const errorMessage = this.testId === undefined 
-          ? "Произошла ошибка при добавлении теста!" : "Произошла ошибка при изменении теста!";
-          this.alertService.error(errorMessage);
-        },
-      });
+      this.test = <Test><unknown>this.form.value;
+      if (this.testId === undefined) {
+        this.testService.create(this.test).subscribe({
+          next: () => {
+            this.alertService.success("Тест успешно добавлен!");
+            this.goToTestList();
+          },
+          error: () => {
+            this.alertService.error("Произошла ошибка при добавлении теста!");
+          },
+        });
+      } else {
+        this.testService.update(this.testId, this.test).subscribe({
+          next: () => {
+            this.alertService.success("Тест успешно изменён!");
+            this.goToTestList();
+          },
+          error: () => {
+            this.alertService.error("Произошла ошибка при изменении теста!");
+          },
+        });
+      }
     }
   }
 

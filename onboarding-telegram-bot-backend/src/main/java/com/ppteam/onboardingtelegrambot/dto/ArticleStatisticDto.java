@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ArticleStatisticDto {
     private long id;
-    private ArticleDto article;
+    private String articleTitle;
     private long ratingsSum;
     private long totalRatingsCount;
 }

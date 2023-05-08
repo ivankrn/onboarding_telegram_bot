@@ -30,8 +30,8 @@ public class Article {
     private String content;
     @Column(name = "useful_links")
     private String usefulLinks;
-    @OneToOne
-    @JoinColumn(name = "test_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_id", foreignKey = @ForeignKey(name = "fk_test", foreignKeyDefinition = "foreign key (test_id) references test(id) on delete set null"))
     private Test test;
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false,
             columnDefinition = "timestamp with time zone default current_timestamp")

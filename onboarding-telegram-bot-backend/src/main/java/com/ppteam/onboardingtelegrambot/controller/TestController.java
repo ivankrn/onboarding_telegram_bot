@@ -1,7 +1,9 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
+import com.ppteam.onboardingtelegrambot.dto.TestCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.TestDto;
 import com.ppteam.onboardingtelegrambot.dto.TestFullDto;
+import com.ppteam.onboardingtelegrambot.dto.TestUpdateDto;
 import com.ppteam.onboardingtelegrambot.service.TestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +36,13 @@ public class TestController {
     }
 
     @PostMapping
-    public void saveTest(@RequestBody @Valid TestFullDto test) {
-        testService.save(test);
+    public void createTest(@RequestBody @Valid TestCreateDto testCreateDto) {
+        testService.create(testCreateDto);
+    }
+
+    @PutMapping("/{id}")
+    public void updateTest(@PathVariable long id, @RequestBody @Valid TestUpdateDto testUpdateDto) {
+        testService.update(id, testUpdateDto);
     }
 
     @DeleteMapping("/{id}")

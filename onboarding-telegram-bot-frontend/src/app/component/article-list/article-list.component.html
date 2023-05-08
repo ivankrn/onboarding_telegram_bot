@@ -21,8 +21,8 @@
             <app-text-read-more [text]="article.content" [charLimit]="300"></app-text-read-more>
           </td>
           <td>{{ article.usefulLinks }}</td>
-          <td *ngIf="article.test">Да</td>
-          <td *ngIf="!article.test">Нет</td>
+          <td *ngIf="article.testId">Да</td>
+          <td *ngIf="!article.testId">Нет</td>
           <td>{{ article.createdAt | date:'d-MM-y' }}</td>
           <td>
             <div class="d-flex">

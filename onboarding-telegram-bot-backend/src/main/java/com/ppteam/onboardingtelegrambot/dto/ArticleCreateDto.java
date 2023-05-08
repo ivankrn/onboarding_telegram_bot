@@ -4,11 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.time.OffsetDateTime;
-
 @Data
-public class ArticleDto {
-    private long id;
+public class ArticleCreateDto {
     @NotNull
     private ArticleTopicDto topic;
     @NotBlank
@@ -16,6 +13,5 @@ public class ArticleDto {
     @NotBlank
     private String content;
     private String usefulLinks;
-    private OffsetDateTime createdAt;
     private Long testId;
 }

@@ -1,8 +1,6 @@
-import { Article } from "./article";
-
 export interface ArticleStatistic {
     id: number;
-    article: Article;
+    articleTitle: string;
     ratingsSum: number;
     totalRatingsCount: number;
 }

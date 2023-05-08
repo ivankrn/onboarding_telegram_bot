@@ -1,9 +1,12 @@
 package com.ppteam.onboardingtelegrambot.service;
 
 import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
+import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
+import com.ppteam.onboardingtelegrambot.dto.ArticleCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
-import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
+import com.ppteam.onboardingtelegrambot.dto.ArticleUpdateDto;
+import com.ppteam.onboardingtelegrambot.dto.mappers.ArticleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,22 +16,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
-    private final MapStructMapper mapStructMapper;
+    private final ArticleMapper articleMapper;
 
     @Override
     public Page<ArticleDto> findAll(Pageable page) {
-        return articleRepository.findAll(page).map(mapStructMapper::articleToArticleDto);
+        return articleRepository.findAll(page).map(article -> articleMapper.articleToArticleDto(article));
     }
 
     @Override
     public ArticleDto findById(long id) {
-        return articleRepository.findById(id).map(mapStructMapper::articleToArticleDto)
+        return articleRepository.findById(id).map(article -> articleMapper.articleToArticleDto(article))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
     public Page<ArticleDto> findByTopicId(long topicId, Pageable page) {
-        return articleRepository.findByTopicId(topicId, page).map(mapStructMapper::articleToArticleDto);
+        return articleRepository.findByTopicId(topicId, page).map(
+                article -> articleMapper.articleToArticleDto(article));
     }
 
     @Override
@@ -37,8 +41,15 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void save(ArticleDto article) {
-        articleRepository.save(mapStructMapper.articleDtoToArticle(article));
+    public void create(ArticleCreateDto articleCreateDto) {
+        articleRepository.save(articleMapper.articleCreateDtoToArticle(articleCreateDto));
+    }
+
+    @Override
+    public void update(long id, ArticleUpdateDto articleUpdateDto) {
+        Article article = articleRepository.findById(id).orElseThrow(NotFoundException::new);
+        articleMapper.updateArticleFromDto(articleUpdateDto, article);
+        articleRepository.save(article);
     }
 
     @Override

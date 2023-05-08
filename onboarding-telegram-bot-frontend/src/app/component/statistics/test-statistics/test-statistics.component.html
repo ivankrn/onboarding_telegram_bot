@@ -9,7 +9,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let statistic of statistics">
-        <td>{{ statistic.test.title }}</td>
+        <td>{{ statistic.testTitle }}</td>
         <td>{{ statistic.totalAttemptsCount }}</td>
         <td>{{ statistic.correctAnswersCount / statistic.totalAnswersCount | percent }}</td>
       </tr>

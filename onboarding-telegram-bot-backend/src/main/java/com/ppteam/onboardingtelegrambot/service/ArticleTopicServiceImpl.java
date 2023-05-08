@@ -2,7 +2,7 @@ package com.ppteam.onboardingtelegrambot.service;
 
 import com.ppteam.onboardingtelegrambot.database.ArticleTopicRepository;
 import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
-import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
+import com.ppteam.onboardingtelegrambot.dto.mappers.ArticleTopicMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleTopicServiceImpl implements ArticleTopicService {
     private final ArticleTopicRepository articleTopicRepository;
-    private final MapStructMapper mapStructMapper;
+    private final ArticleTopicMapper articleTopicMapper;
 
     @Override
     public List<ArticleTopicDto> findAll() {
-        return articleTopicRepository.findAll().stream().map(mapStructMapper::topicToTopicDto).collect(Collectors.toList());
+        return articleTopicRepository.findAll().stream().map(articleTopicMapper::topicToTopicDto).collect(Collectors.toList());
     }
 
     @Override
     public void save(ArticleTopicDto topicDto) {
-        articleTopicRepository.save(mapStructMapper.topicDtoToTopic(topicDto));
+        articleTopicRepository.save(articleTopicMapper.topicDtoToTopic(topicDto));
     }
 
     @Override

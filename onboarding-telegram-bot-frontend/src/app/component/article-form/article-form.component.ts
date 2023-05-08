@@ -30,10 +30,7 @@ export class ArticleFormComponent implements OnInit {
       name: new FormControl()
     }),
     usefulLinks: new FormControl(""),
-    test: new FormGroup({
-      id: new FormControl(null),
-      title: new FormControl()
-    })
+    testId: new FormControl(null)
   });
 
   constructor(private route: ActivatedRoute, private router: Router, 
@@ -60,21 +57,28 @@ export class ArticleFormComponent implements OnInit {
   public onSubmit() {
     if (this.form.valid) {
       this.article = Object.assign(this.article, this.form.value);
-      if (this.form.value.test!.id == null) {
-        this.article.test = undefined;
+      console.log(this.article);
+      if (this.articleId === undefined) {
+        this.articleService.create(this.article).subscribe({
+          next: () => {
+            this.alertService.success("Статья успешно добавлена!");
+            this.goToArticleList();
+          },
+          error: () => {
+            this.alertService.error("Произошла ошибка при добавлении статьи!");
+          },
+        });
+      } else {
+        this.articleService.update(this.articleId, this.article).subscribe({
+          next: () => {
+            this.alertService.success("Статья успешно изменена!");
+            this.goToArticleList();
+          },
+          error: () => {
+            this.alertService.error("Произошла ошибка при изменении статьи!");
+          },
+        });
       }
-      this.articleService.save(this.article).subscribe({
-        next: () => {
-          const successMessage = this.articleId === undefined ? "Статья успешно добавлена!" : "Статья успешно изменена!";
-          this.alertService.success(successMessage);
-          this.goToArticleList();
-        },
-        error: () => {
-          const errorMessage = this.articleId === undefined 
-          ? "Произошла ошибка при добавлении статьи!" : "Произошла ошибка при изменении статьи!";
-          this.alertService.error(errorMessage);
-        },
-      });
     }
   }
 

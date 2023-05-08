@@ -6,7 +6,7 @@ import com.ppteam.onboardingtelegrambot.database.TestRepository;
 import com.ppteam.onboardingtelegrambot.database.TestStatistic;
 import com.ppteam.onboardingtelegrambot.database.TestStatisticRepository;
 import com.ppteam.onboardingtelegrambot.dto.TestStatisticDto;
-import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
+import com.ppteam.onboardingtelegrambot.dto.mappers.TestStatisticMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,22 +19,22 @@ public class TestStatisticServiceImpl implements TestStatisticService {
 
     private final TestStatisticRepository testStatisticRepository;
     private final TestRepository testRepository;
-    private final MapStructMapper mapStructMapper;
+    private final TestStatisticMapper testStatisticMapper;
 
     @Override
     public Page<TestStatisticDto> findAll(Pageable page) {
-        return testStatisticRepository.findAll(page).map(mapStructMapper::testStatisticToTestStatisticDto);
+        return testStatisticRepository.findAll(page).map(testStatisticMapper::testStatisticToTestStatisticDto);
     }
 
     @Override
     public TestStatisticDto findById(long id) {
-        return testStatisticRepository.findById(id).map(mapStructMapper::testStatisticToTestStatisticDto)
+        return testStatisticRepository.findById(id).map(testStatisticMapper::testStatisticToTestStatisticDto)
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
     public void save(TestStatisticDto testStatisticDto) {
-        testStatisticRepository.save(mapStructMapper.testStatisticDtoToTestStatistic(testStatisticDto));
+        testStatisticRepository.save(testStatisticMapper.testStatisticDtoToTestStatistic(testStatisticDto));
     }
 
     @Override

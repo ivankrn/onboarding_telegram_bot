@@ -4,7 +4,7 @@ import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.TestSession;
 import com.ppteam.onboardingtelegrambot.database.TestSessionRepository;
 import com.ppteam.onboardingtelegrambot.dto.TestSessionDto;
-import com.ppteam.onboardingtelegrambot.dto.mappers.MapStructMapper;
+import com.ppteam.onboardingtelegrambot.dto.mappers.TestSessionMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TestSessionServiceImpl implements TestSessionService {
     private final TestSessionRepository testSessionRepository;
-    private final MapStructMapper mapStructMapper;
+    private final TestSessionMapper testSessionMapper;
 
     @Override
     public TestSessionDto findByUserId(long userId) {
-        return testSessionRepository.findByUserId(userId).map(mapStructMapper::testSessionToTestSessionDto)
+        return testSessionRepository.findByUserId(userId).map(testSessionMapper::testSessionToTestSessionDto)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -38,7 +38,7 @@ public class TestSessionServiceImpl implements TestSessionService {
 
     @Override
     public void save(TestSessionDto session) {
-        testSessionRepository.save(mapStructMapper.testSessionDtoToTestSession(session));
+        testSessionRepository.save(testSessionMapper.testSessionDtoToTestSession(session));
     }
 
     @Override

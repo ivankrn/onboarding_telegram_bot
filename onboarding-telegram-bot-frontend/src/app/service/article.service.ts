@@ -24,8 +24,12 @@ export class ArticleService {
     return this.httpClient.get<number>(this.apiUrl + "/count");
   }
 
-  public save(article: Article) {
+  public create(article: Partial<Article>) {
     return this.httpClient.post<Article>(this.apiUrl, article);
+  }
+
+  public update(id: number, article: Partial<Article>) {
+    return this.httpClient.put<Article>(this.apiUrl + "/" + id, article);
   }
 
   public delete(id: number) {

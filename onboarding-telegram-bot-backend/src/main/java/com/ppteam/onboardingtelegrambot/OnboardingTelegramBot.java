@@ -203,8 +203,8 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         message.setText(formatArticle(article));
         message.setReplyMarkup(Buttons.articleRatingMarkup(articleId));
         executeMessageWithLogging(message);
-        if (article.getTest() != null) {
-            offerTestById(chatId, article.getTest().getId());
+        if (article.getTestId() != null) {
+            offerTestById(chatId, article.getTestId());
         }
     }
 
