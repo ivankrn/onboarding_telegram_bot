@@ -21,8 +21,8 @@ export class TestFormComponent implements OnInit, OnDestroy {
   test: Test;
   articleTopics: ArticleTopic[];
   form = new FormGroup({
-    title: new FormControl("", Validators.required),
-    description: new FormControl(""),
+    title: new FormControl(null, Validators.required),
+    description: new FormControl(null),
     topic: new FormGroup({
       id: new FormControl(null, Validators.required),
       name: new FormControl()
@@ -80,7 +80,6 @@ export class TestFormComponent implements OnInit, OnDestroy {
         });
       } else {
         this.test = this.getChangedFormValues(this.form);
-        console.log(this.test);
         this.testService.updatePartial(this.testId, this.test).subscribe({
           next: () => {
             this.alertService.success("Тест успешно изменён!");

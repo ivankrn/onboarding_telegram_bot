@@ -56,10 +56,8 @@ export class ArticleFormComponent implements OnInit {
 
   public onSubmit() {
     if (this.form.valid) {
-      // this.article = Object.assign(this.article, this.form.value);
       if (this.articleId === undefined) {
         this.article = <Article><unknown>this.form.value;
-        console.log(this.article);
         this.articleService.create(this.article).subscribe({
           next: () => {
             this.alertService.success("Статья успешно добавлена!");
@@ -71,7 +69,6 @@ export class ArticleFormComponent implements OnInit {
         });
       } else {
         this.article = this.getChangedFormValues(this.form);
-        console.log(this.article);
         this.articleService.updatePartial(this.articleId, this.article).subscribe({
           next: () => {
             this.alertService.success("Статья успешно изменена!");
