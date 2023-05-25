@@ -32,6 +32,10 @@ export class ArticleService {
     return this.httpClient.put<Article>(this.apiUrl + "/" + id, article);
   }
 
+  public updatePartial(id: number, article: Partial<Article>) {
+    return this.httpClient.patch<Article>(this.apiUrl + "/" + id, article);
+  }
+
   public delete(id: number) {
     return this.httpClient.delete<Article>(this.apiUrl + '/' + id);
   }

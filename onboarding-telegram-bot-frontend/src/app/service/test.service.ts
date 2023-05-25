@@ -33,6 +33,10 @@ export class TestService {
     return this.httpClient.put<Test>(this.apiUrl + "/" + id, test);
   }
 
+  public updatePartial(id: number, test: Partial<Test>) {
+    return this.httpClient.patch<Test>(this.apiUrl + "/" + id, test);
+  }
+
   public delete(id: number) {
     return this.httpClient.delete<Test>(this.apiUrl + '/' + id);
   }

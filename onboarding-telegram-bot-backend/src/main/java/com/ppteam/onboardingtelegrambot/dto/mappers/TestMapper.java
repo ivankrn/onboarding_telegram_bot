@@ -25,13 +25,35 @@ public abstract class TestMapper {
         if (testUpdateDto == null) {
             return;
         }
+        test.setTitle(testUpdateDto.getTitle());
+        test.setTopic(articleTopicMapper.topicDtoToTopic(testUpdateDto.getTopic()));
+        test.setDescription(testUpdateDto.getDescription());
         test.getQuestions().forEach(question -> question.setTest(null));
         test.getQuestions().clear();
-        test.setTopic(articleTopicMapper.topicDtoToTopic(testUpdateDto.getTopic()));
-        test.setTitle(testUpdateDto.getTitle());
-        test.setDescription(testUpdateDto.getDescription());
         if (testUpdateDto.getQuestions() != null) {
             for (TestQuestionFullDto question : testUpdateDto.getQuestions()) {
+                test.addQuestion(testQuestionMapper.testQuestionFullDtoToTestQuestion(question));
+            }
+        }
+    }
+
+    public void patchTestFromDto(TestPatchDto testPatchDto, @MappingTarget Test test) {
+        if (testPatchDto == null) {
+            return;
+        }
+        if (testPatchDto.getTopic() != null) {
+            test.setTopic(articleTopicMapper.topicDtoToTopic(testPatchDto.getTopic()));
+        }
+        if (testPatchDto.getTitle() != null && testPatchDto.getTitle().isPresent()) {
+            test.setTitle(testPatchDto.getTitle().get());
+        }
+        if (testPatchDto.getDescription() != null) {
+            test.setDescription(testPatchDto.getDescription());
+        }
+        if (testPatchDto.getQuestions() != null) {
+            test.getQuestions().forEach(question -> question.setTest(null));
+            test.getQuestions().clear();
+            for (TestQuestionFullDto question : testPatchDto.getQuestions()) {
                 test.addQuestion(testQuestionMapper.testQuestionFullDtoToTestQuestion(question));
             }
         }

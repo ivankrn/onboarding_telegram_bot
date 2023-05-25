@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/alert/service/alert.service';
 import { ArticleTopic } from 'src/app/model/article-topic';
 import { Test } from 'src/app/model/test';
@@ -67,8 +67,8 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   public onSubmit() {
     if (this.form.valid) {
-      this.test = <Test><unknown>this.form.value;
       if (this.testId === undefined) {
+        this.test = <Test><unknown>this.form.value;
         this.testService.create(this.test).subscribe({
           next: () => {
             this.alertService.success("Тест успешно добавлен!");
@@ -79,7 +79,9 @@ export class TestFormComponent implements OnInit, OnDestroy {
           },
         });
       } else {
-        this.testService.update(this.testId, this.test).subscribe({
+        this.test = this.getChangedFormValues(this.form);
+        console.log(this.test);
+        this.testService.updatePartial(this.testId, this.test).subscribe({
           next: () => {
             this.alertService.success("Тест успешно изменён!");
             this.goToTestList();
@@ -90,6 +92,37 @@ export class TestFormComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  private getChangedFormValues(form: any) {
+    const changedValues: any = {};
+    if (form.controls["title"].dirty) {
+      changedValues["title"] = form.controls["title"].value;
+    }
+    if (form.controls["description"].dirty) {
+      changedValues["description"] = form.controls["description"].value;
+    }
+    if (form.controls["topic"].dirty) {
+      changedValues["topic"] = form.controls["topic"].value;
+    }
+    let areQuestionsChanged = form.controls["questions"].dirty;
+    for (const question of form.controls["questions"].controls) {
+      for (const answer of question.controls["answers"].controls) {
+        if (answer.dirty) {
+          areQuestionsChanged = true;
+          break;
+        }
+      }
+      if (question.dirty) {
+        areQuestionsChanged = true;
+      }
+      if (areQuestionsChanged) {
+        changedValues["questions"] = form.controls["questions"].value;
+        areQuestionsChanged = true;
+        break;
+      }
+    }
+    return changedValues;
   }
 
   public goToTestList() {
@@ -113,10 +146,12 @@ export class TestFormComponent implements OnInit, OnDestroy {
       question: new FormControl("", Validators.required),
       answers: new FormArray([], Validators.required)
     }));
+    this.form.controls["questions"].markAsDirty();
   }
 
   deleteQuestionById(questionId: number) {
     this.questions.removeAt(questionId);
+    this.form.controls["questions"].markAsDirty();
   }
 
   addAnswerToId(questionId: number) {
@@ -124,10 +159,12 @@ export class TestFormComponent implements OnInit, OnDestroy {
       answer: new FormControl("", Validators.required),
       correct: new FormControl(false)
     }));
+    this.getAnswersByQuestionId(questionId).markAsDirty();
   }
 
   deleteAnswerById(questionId: number, answerId: number) {
     this.getAnswersByQuestionId(questionId).removeAt(answerId);
+    this.getAnswersByQuestionId(questionId).markAsDirty();
   }
 
   openTopicPopup() {

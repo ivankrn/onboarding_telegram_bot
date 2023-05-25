@@ -4,6 +4,7 @@ import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.TestRepository;
 import com.ppteam.onboardingtelegrambot.dto.ArticleCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
+import com.ppteam.onboardingtelegrambot.dto.ArticlePatchDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleUpdateDto;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -55,6 +56,29 @@ public abstract class ArticleMapper {
             article.setTest(testRepository.getReferenceById(articleUpdateDto.getTestId()));
         } else {
             article.setTest(null);
+        }
+    }
+
+    public void patchArticleFromDto(ArticlePatchDto articlePatchDto, @MappingTarget Article article) {
+        if (articlePatchDto == null) {
+            return;
+        }
+        if (articlePatchDto.getTopic() != null) {
+            article.setTopic(articleTopicMapper.topicDtoToTopic(articlePatchDto.getTopic()));
+        }
+        if (articlePatchDto.getTitle() != null && articlePatchDto.getTitle().isPresent()) {
+            article.setTitle(articlePatchDto.getTitle().get());
+        }
+        if (articlePatchDto.getContent() != null && articlePatchDto.getContent().isPresent()) {
+            article.setContent(articlePatchDto.getContent().get());
+        }
+        article.setUsefulLinks(articlePatchDto.getUsefulLinks());
+        if (articlePatchDto.getTestId() != null) {
+            if (articlePatchDto.getTestId().isPresent()) {
+                article.setTest(testRepository.getReferenceById(articlePatchDto.getTestId().get()));
+            } else {
+                article.setTest(null);
+            }
         }
     }
 }

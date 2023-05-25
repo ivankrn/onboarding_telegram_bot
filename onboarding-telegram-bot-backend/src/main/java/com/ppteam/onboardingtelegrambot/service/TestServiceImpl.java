@@ -3,10 +3,7 @@ package com.ppteam.onboardingtelegrambot.service;
 import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
 import com.ppteam.onboardingtelegrambot.database.Test;
 import com.ppteam.onboardingtelegrambot.database.TestRepository;
-import com.ppteam.onboardingtelegrambot.dto.TestCreateDto;
-import com.ppteam.onboardingtelegrambot.dto.TestDto;
-import com.ppteam.onboardingtelegrambot.dto.TestFullDto;
-import com.ppteam.onboardingtelegrambot.dto.TestUpdateDto;
+import com.ppteam.onboardingtelegrambot.dto.*;
 import com.ppteam.onboardingtelegrambot.dto.mappers.TestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,6 +46,13 @@ public class TestServiceImpl implements TestService {
     public void update(long id, TestUpdateDto testUpdateDto) {
         Test test = testRepository.findById(id).orElseThrow(NotFoundException::new);
         testMapper.updateTestFromDto(testUpdateDto, test);
+        testRepository.save(test);
+    }
+
+    @Override
+    public void updatePartial(long id, TestPatchDto testPatchDto) {
+        Test test = testRepository.findById(id).orElseThrow(NotFoundException::new);
+        testMapper.patchTestFromDto(testPatchDto, test);
         testRepository.save(test);
     }
 

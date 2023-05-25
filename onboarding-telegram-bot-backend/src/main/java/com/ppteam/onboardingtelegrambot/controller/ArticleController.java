@@ -2,6 +2,7 @@ package com.ppteam.onboardingtelegrambot.controller;
 
 import com.ppteam.onboardingtelegrambot.dto.ArticleCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
+import com.ppteam.onboardingtelegrambot.dto.ArticlePatchDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleUpdateDto;
 import com.ppteam.onboardingtelegrambot.service.ArticleService;
 import jakarta.validation.Valid;
@@ -43,6 +44,11 @@ public class ArticleController {
     @PutMapping("/{id}")
     public void updateArticle(@PathVariable long id, @RequestBody @Valid ArticleUpdateDto articleUpdateDto) {
         articleService.update(id, articleUpdateDto);
+    }
+
+    @PatchMapping("/{id}")
+    public void patchArticle(@PathVariable long id, @RequestBody @Valid ArticlePatchDto articlePatchDto) {
+        articleService.updatePartial(id, articlePatchDto);
     }
 
     @DeleteMapping("/{id}")

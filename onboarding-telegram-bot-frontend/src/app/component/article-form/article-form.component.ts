@@ -23,13 +23,13 @@ export class ArticleFormComponent implements OnInit {
   articleTopics: ArticleTopic[];
   tests: Observable<Map<number, string>>;
   form = new FormGroup({
-    title: new FormControl("", Validators.required),
-    content: new FormControl("", Validators.required),
+    title: new FormControl(null, Validators.required),
+    content: new FormControl(null, Validators.required),
     topic: new FormGroup({
       id: new FormControl(null, Validators.required),
       name: new FormControl()
     }),
-    usefulLinks: new FormControl(""),
+    usefulLinks: new FormControl(null),
     testId: new FormControl(null)
   });
 
@@ -56,9 +56,10 @@ export class ArticleFormComponent implements OnInit {
 
   public onSubmit() {
     if (this.form.valid) {
-      this.article = Object.assign(this.article, this.form.value);
-      console.log(this.article);
+      // this.article = Object.assign(this.article, this.form.value);
       if (this.articleId === undefined) {
+        this.article = <Article><unknown>this.form.value;
+        console.log(this.article);
         this.articleService.create(this.article).subscribe({
           next: () => {
             this.alertService.success("Статья успешно добавлена!");
@@ -69,7 +70,9 @@ export class ArticleFormComponent implements OnInit {
           },
         });
       } else {
-        this.articleService.update(this.articleId, this.article).subscribe({
+        this.article = this.getChangedFormValues(this.form);
+        console.log(this.article);
+        this.articleService.updatePartial(this.articleId, this.article).subscribe({
           next: () => {
             this.alertService.success("Статья успешно изменена!");
             this.goToArticleList();
@@ -80,6 +83,21 @@ export class ArticleFormComponent implements OnInit {
         });
       }
     }
+  }
+
+  private getChangedFormValues(form: any) {
+    const changedValues: any = {};
+    Object.keys(form.controls)
+    .forEach(key => {
+        let currentControl = form.controls[key];
+        if (currentControl.dirty) {
+            if (currentControl.controls)
+            changedValues[key] = this.getChangedFormValues(currentControl);
+            else
+            changedValues[key] = currentControl.value;
+        }
+    });
+    return changedValues;
   }
 
   public goToArticleList() {

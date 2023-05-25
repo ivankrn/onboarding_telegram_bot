@@ -5,6 +5,7 @@ import com.ppteam.onboardingtelegrambot.database.Article;
 import com.ppteam.onboardingtelegrambot.database.ArticleRepository;
 import com.ppteam.onboardingtelegrambot.dto.ArticleCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
+import com.ppteam.onboardingtelegrambot.dto.ArticlePatchDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleUpdateDto;
 import com.ppteam.onboardingtelegrambot.dto.mappers.ArticleMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,19 +21,19 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Page<ArticleDto> findAll(Pageable page) {
-        return articleRepository.findAll(page).map(article -> articleMapper.articleToArticleDto(article));
+        return articleRepository.findAll(page).map(articleMapper::articleToArticleDto);
     }
 
     @Override
     public ArticleDto findById(long id) {
-        return articleRepository.findById(id).map(article -> articleMapper.articleToArticleDto(article))
+        return articleRepository.findById(id).map(articleMapper::articleToArticleDto)
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
     public Page<ArticleDto> findByTopicId(long topicId, Pageable page) {
         return articleRepository.findByTopicId(topicId, page).map(
-                article -> articleMapper.articleToArticleDto(article));
+                articleMapper::articleToArticleDto);
     }
 
     @Override
@@ -49,6 +50,13 @@ public class ArticleServiceImpl implements ArticleService {
     public void update(long id, ArticleUpdateDto articleUpdateDto) {
         Article article = articleRepository.findById(id).orElseThrow(NotFoundException::new);
         articleMapper.updateArticleFromDto(articleUpdateDto, article);
+        articleRepository.save(article);
+    }
+
+    @Override
+    public void updatePartial(long id, ArticlePatchDto articlePatchDto) {
+        Article article = articleRepository.findById(id).orElseThrow(NotFoundException::new);
+        articleMapper.patchArticleFromDto(articlePatchDto, article);
         articleRepository.save(article);
     }
 
