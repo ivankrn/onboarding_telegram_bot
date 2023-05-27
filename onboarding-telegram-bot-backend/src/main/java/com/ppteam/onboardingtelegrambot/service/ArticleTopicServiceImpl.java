@@ -1,7 +1,11 @@
 package com.ppteam.onboardingtelegrambot.service;
 
+import com.ppteam.onboardingtelegrambot.controller.error.NotFoundException;
+import com.ppteam.onboardingtelegrambot.database.ArticleTopic;
 import com.ppteam.onboardingtelegrambot.database.ArticleTopicRepository;
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicPatchDto;
 import com.ppteam.onboardingtelegrambot.dto.mappers.ArticleTopicMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +26,15 @@ public class ArticleTopicServiceImpl implements ArticleTopicService {
     }
 
     @Override
-    public void save(ArticleTopicDto topicDto) {
-        articleTopicRepository.save(articleTopicMapper.topicDtoToTopic(topicDto));
+    public void create(ArticleTopicCreateDto topicDto) {
+        articleTopicRepository.save(articleTopicMapper.topicCreateDtoToTopic(topicDto));
+    }
+
+    @Override
+    public void updatePartial(long id, ArticleTopicPatchDto articleTopicPatchDto) {
+        ArticleTopic articleTopic = articleTopicRepository.findById(id).orElseThrow(NotFoundException::new);
+        articleTopicMapper.patchArticleTopicFromDto(articleTopicPatchDto, articleTopic);
+        articleTopicRepository.save(articleTopic);
     }
 
     @Override

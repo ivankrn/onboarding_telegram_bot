@@ -1,6 +1,8 @@
 package com.ppteam.onboardingtelegrambot.controller;
 
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicCreateDto;
 import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
+import com.ppteam.onboardingtelegrambot.dto.ArticleTopicPatchDto;
 import com.ppteam.onboardingtelegrambot.service.ArticleTopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +24,13 @@ public class ArticleTopicController {
     }
 
     @PostMapping
-    public void saveTopic(@RequestBody @Valid ArticleTopicDto topic) {
-        articleTopicService.save(topic);
+    public void createTopic(@RequestBody @Valid ArticleTopicCreateDto topic) {
+        articleTopicService.create(topic);
+    }
+
+    @PatchMapping("/{id}")
+    public void patchTopic(@PathVariable long id, @RequestBody @Valid ArticleTopicPatchDto articleTopicPatchDto) {
+        articleTopicService.updatePartial(id, articleTopicPatchDto);
     }
 
     @DeleteMapping("/{id}")

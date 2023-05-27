@@ -95,10 +95,11 @@ export class ArticleFormComponent implements OnInit {
     .forEach(key => {
         let currentControl = form.controls[key];
         if (currentControl.dirty) {
-            if (currentControl.controls)
-            changedValues[key] = this.getChangedFormValues(currentControl);
-            else
-            changedValues[key] = currentControl.value;
+            if (currentControl.controls) {
+              changedValues[key] = this.getChangedFormValues(currentControl);
+            } else {
+              changedValues[key] = currentControl.value;
+            }
         }
     });
     return changedValues;

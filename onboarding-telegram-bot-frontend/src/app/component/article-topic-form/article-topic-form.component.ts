@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Article } from 'src/app/model/article';
 import { ArticleTopic } from 'src/app/model/article-topic';
 import { ArticleTopicService } from 'src/app/service/article-topic.service';
 import { ModalService } from 'src/app/service/modal.service';
@@ -14,7 +15,7 @@ export class ArticleTopicFormComponent implements OnInit {
   topic: ArticleTopic;
   articleTopics: ArticleTopic[];
   form = new FormGroup({
-    name: new FormControl("", Validators.required)
+    name: new FormControl(null, Validators.required)
   });
   topicToDeleteId: number;
   @Output()
@@ -43,14 +44,37 @@ export class ArticleTopicFormComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      this.topic = Object.assign(this.topic, this.form.value);
-      this.articleTopicService.save(this.topic).subscribe(() => {
-        this.updateTopics();
-        if (this.topic.id !== undefined) {
+      if (this.topic.id === undefined) {
+        this.topic = <ArticleTopic><unknown>this.form.value;
+        this.articleTopicService.create(this.topic).subscribe(() => {
+          this.updateTopics();
+        });
+      } else {
+        const topicIdToChange = this.topic.id;
+        this.topic = this.getChangedFormValues(this.form);
+        this.articleTopicService.updatePartial(topicIdToChange, this.topic).subscribe(() => {
+          this.updateTopics();
           this.closeEditPopup();
-        }
-      });
+        })
+      }
+      this.form.controls["name"].patchValue(null);
     }
+  }
+
+  private getChangedFormValues(form: any) {
+    const changedValues: any = {};
+    Object.keys(form.controls)
+    .forEach(key => {
+        let currentControl = form.controls[key];
+        if (currentControl.dirty) {
+            if (currentControl.controls) {
+              changedValues[key] = this.getChangedFormValues(currentControl);
+            } else {
+              changedValues[key] = currentControl.value;
+            }
+        }
+    });
+    return changedValues;
   }
 
   openEditPopup(topicToEditId: number) {

@@ -16,8 +16,12 @@ export class ArticleTopicService {
     return this.httpClient.get<ArticleTopic[]>(this.apiUrl);
   }
 
-  public save(topic: ArticleTopic) {
+  public create(topic: ArticleTopic) {
     return this.httpClient.post<ArticleTopic>(this.apiUrl, topic);
+  }
+
+  public updatePartial(id: number, articleTopic: Partial<ArticleTopic>) {
+    return this.httpClient.patch<ArticleTopic>(this.apiUrl + "/" + id, articleTopic);
   }
 
   public delete(id: number) {
