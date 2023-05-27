@@ -1,5 +1,6 @@
 package com.ppteam.onboardingtelegrambot.dto;
 
+import com.ppteam.onboardingtelegrambot.validators.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ public class TestCreateDto {
     private String title;
     @NotNull
     private ArticleTopicDto topic;
+    @NullOrNotBlank
     private String description;
     @NotEmpty
     private Set<TestQuestionFullDto> questions;

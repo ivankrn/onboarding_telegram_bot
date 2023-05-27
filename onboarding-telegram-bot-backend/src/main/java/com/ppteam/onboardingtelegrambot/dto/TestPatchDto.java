@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.ppteam.onboardingtelegrambot.validators.NullOrNotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.Optional;
@@ -8,8 +9,9 @@ import java.util.Set;
 
 @Data
 public class TestPatchDto {
-    private Optional<@NotBlank String> title;
+    @NullOrNotBlank
+    private String title;
     private ArticleTopicDto topic;
-    private String description;
-    private Set<TestQuestionFullDto> questions;
+    private Optional<@NullOrNotBlank String> description;
+    private Optional<@NotEmpty Set<TestQuestionFullDto>> questions;
 }

@@ -45,7 +45,7 @@ export class ArticleTopicFormComponent implements OnInit {
     if (this.form.valid) {
       this.topic = Object.assign(this.topic, this.form.value);
       this.articleTopicService.save(this.topic).subscribe(() => {
-        this.updateTopics()
+        this.updateTopics();
         if (this.topic.id !== undefined) {
           this.closeEditPopup();
         }

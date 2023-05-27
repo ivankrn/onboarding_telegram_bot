@@ -44,16 +44,20 @@ public abstract class TestMapper {
         if (testPatchDto.getTopic() != null) {
             test.setTopic(articleTopicMapper.topicDtoToTopic(testPatchDto.getTopic()));
         }
-        if (testPatchDto.getTitle() != null && testPatchDto.getTitle().isPresent()) {
-            test.setTitle(testPatchDto.getTitle().get());
+        if (testPatchDto.getTitle() != null) {
+            test.setTitle(testPatchDto.getTitle());
         }
         if (testPatchDto.getDescription() != null) {
-            test.setDescription(testPatchDto.getDescription());
+            if (testPatchDto.getDescription().isPresent()) {
+                test.setDescription(testPatchDto.getDescription().get());
+            } else {
+                test.setDescription(null);
+            }
         }
-        if (testPatchDto.getQuestions() != null) {
+        if (testPatchDto.getQuestions() != null && testPatchDto.getQuestions().isPresent()) {
             test.getQuestions().forEach(question -> question.setTest(null));
             test.getQuestions().clear();
-            for (TestQuestionFullDto question : testPatchDto.getQuestions()) {
+            for (TestQuestionFullDto question : testPatchDto.getQuestions().get()) {
                 test.addQuestion(testQuestionMapper.testQuestionFullDtoToTestQuestion(question));
             }
         }

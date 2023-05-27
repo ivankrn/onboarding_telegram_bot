@@ -67,6 +67,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   public onSubmit() {
     if (this.form.valid) {
+      this.sanitizeFormData();
       if (this.testId === undefined) {
         this.test = <Test><unknown>this.form.value;
         this.testService.create(this.test).subscribe({
@@ -90,6 +91,12 @@ export class TestFormComponent implements OnInit, OnDestroy {
           },
         });
       }
+    }
+  }
+
+  private sanitizeFormData() {
+    if ((this.form.get("description")?.value as unknown as string)?.trim() === '') {
+      this.form.controls["description"].patchValue(null);
     }
   }
 

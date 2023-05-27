@@ -56,6 +56,7 @@ export class ArticleFormComponent implements OnInit {
 
   public onSubmit() {
     if (this.form.valid) {
+      this.sanitizeFormData();
       if (this.articleId === undefined) {
         this.article = <Article><unknown>this.form.value;
         this.articleService.create(this.article).subscribe({
@@ -79,6 +80,12 @@ export class ArticleFormComponent implements OnInit {
           },
         });
       }
+    }
+  }
+
+  private sanitizeFormData() {
+    if ((this.form.get("usefulLinks")?.value as unknown as string)?.trim() === '') {
+      this.form.controls["usefulLinks"].patchValue(null);
     }
   }
 

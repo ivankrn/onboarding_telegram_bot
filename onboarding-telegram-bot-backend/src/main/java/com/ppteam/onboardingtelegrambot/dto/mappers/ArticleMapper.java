@@ -66,13 +66,19 @@ public abstract class ArticleMapper {
         if (articlePatchDto.getTopic() != null) {
             article.setTopic(articleTopicMapper.topicDtoToTopic(articlePatchDto.getTopic()));
         }
-        if (articlePatchDto.getTitle() != null && articlePatchDto.getTitle().isPresent()) {
-            article.setTitle(articlePatchDto.getTitle().get());
+        if (articlePatchDto.getTitle() != null) {
+            article.setTitle(articlePatchDto.getTitle());
         }
-        if (articlePatchDto.getContent() != null && articlePatchDto.getContent().isPresent()) {
-            article.setContent(articlePatchDto.getContent().get());
+        if (articlePatchDto.getContent() != null) {
+            article.setContent(articlePatchDto.getContent());
         }
-        article.setUsefulLinks(articlePatchDto.getUsefulLinks());
+        if (articlePatchDto.getUsefulLinks() != null) {
+            if (articlePatchDto.getUsefulLinks().isPresent()) {
+                article.setUsefulLinks(articlePatchDto.getUsefulLinks().get());
+            } else {
+                article.setUsefulLinks(null);
+            }
+        }
         if (articlePatchDto.getTestId() != null) {
             if (articlePatchDto.getTestId().isPresent()) {
                 article.setTest(testRepository.getReferenceById(articlePatchDto.getTestId().get()));
