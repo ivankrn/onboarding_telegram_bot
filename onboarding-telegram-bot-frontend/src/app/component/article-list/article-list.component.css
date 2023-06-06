@@ -5,3 +5,14 @@
 .table-container {
     display: table;
 }
+
+.article-list__add-article-button {
+  background: #00AA13;
+  border-radius: 10px;
+  font-family: 'Muller';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 7px 40px;
+  margin-right: 20px;
+}

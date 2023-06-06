@@ -1,40 +1,41 @@
-<div class="card">
-  <div class="card-body">
+<div class="main">
+  <h1 class="main__title">Добавить статью</h1>
+  <div class="card-body main__add-article">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="title">Заголовок:</label>
-        <input id="title" type="text" formControlName="title" class="form-control">
+        <label for="title" class="add-article__label">Заголовок</label>
+        <input id="title" type="text" formControlName="title" class="form-control add-article__input" placeholder="Введите заголовок статьи">
       </div>
       <div class="form-group" formGroupName="topic">
-        <label for="id">Тема:</label>
-        <select class="form-select" formControlName="id">
+        <label for="id" class="add-article__label">Тема</label>
+        <select class="form-select add-article__input" formControlName="id">
           <option *ngFor="let topic of articleTopics" [ngValue]="topic.id">{{topic.name}}</option>
         </select>
       </div>
       <div class="text-muted mt-2 mb-3">
-        <span id="topic-add-suggestion" (click)="openTopicPopup()">Не нашли подходящей темы? Добавьте новую</span>
+        <span id="topic-add-suggestion" (click)="openTopicPopup()" class="add-theme">Не нашли подходящей темы? Добавьте новую</span>
       </div>
       <app-modal id="topic-popup" (onClose)="updateTopics()">
         <app-article-topic-form (deletedTopicId)="updateTopicsAfterTopicDeletion($event)"></app-article-topic-form>
       </app-modal>
       <div class="form-group">
-        <label for="content">Текст:</label>
-        <textarea id="content" formControlName="content" class="form-control" rows="10"></textarea>
+        <label for="content" class="add-article__label">Текст</label>
+        <textarea id="content" formControlName="content" class="form-control add-article__input" placeholder="Введите текст статьи" rows="10"></textarea>
       </div>
       <div class="form-group">
-        <label for="usefulLinks">Полезные ссылки:</label>
-        <input id="usefulLinks" type="text" formControlName="usefulLinks" class="form-control">
+        <label for="usefulLinks" class="add-article__label">Полезные ссылки</label>
+        <input id="usefulLinks" type="text" placeholder="Введите полезные ссылки" formControlName="usefulLinks" class="form-control add-article__input">
       </div>
       <div class="form-group">
-        <label for="id">Тест:</label>
-        <select class="form-select" formControlName="testId">
+        <label for="id" class="add-article__label">Тест</label>
+        <select class="form-select add-article__input" formControlName="testId">
           <option [ngValue]="null">-</option>
           <option *ngFor="let test of tests | async | keyvalue" [ngValue]="test.key">{{test.value}}</option>
         </select>
       </div>
       <div class="form-group text-end mt-3">
-        <button routerLink="/articles" type="button" class="btn btn-danger mr-auto">Отмена</button>
-        <button type="submit" [disabled]="!form.valid" class="btn btn-success">OK</button>
+        <button type="submit" [disabled]="!form.valid" class="btn btn-success add-article__button button-reset">Добавить</button>
+        <button routerLink="/articles" type="button" class="btn btn-danger mr-auto add-article__button-cancel button-reset">Отмена</button>
       </div>
     </form>
   </div>

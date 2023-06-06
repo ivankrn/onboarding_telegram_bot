@@ -1,59 +1,61 @@
-<div class="card">
-    <div class="card-body">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-                <label for="title">Название:</label>
-                <input id="title" type="text" formControlName="title" class="form-control">
-            </div>
-            <div class="form-group" formGroupName="topic">
-                <label for="id">Тема:</label>
-                <select class="form-select" formControlName="id">
-                    <option *ngFor="let topic of articleTopics" [ngValue]="topic.id">{{topic.name}}
-                    </option>
-                </select>
-            </div>
-            <div class="text-muted mt-2 mb-3">
-                <span id="topic-add-suggestion" (click)="openTopicPopup()">Не нашли подходящей темы? Добавьте новую</span>
+<div class="main">
+    <h1 class="main__title">Добавить тест</h1>
+      <div class="card-body main__add-test">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                  <label for="title" class="add-test__label">Название</label>
+                  <input id="title" type="text" formControlName="title" class="form-control add-test__input" placeholder="Введите название теста">
               </div>
-              <app-modal id="topic-popup" (onClose)="this.updateTopics()">
-                <app-article-topic-form (deletedTopicId)="this.updateTopicsAfterTopicDeletion($event)"></app-article-topic-form>
-              </app-modal>
-            <div class="form-group">
-                <label for="description">Описание:</label>
-                <input id="description" type="text" formControlName="description" class="form-control">
-            </div>
-            <div class="form-group" formArrayName="questions">
-                <ul class="list-group" *ngFor="let question of questions.controls; let questionIndex=index">
-                    <li class="list-group-item my-3 ms-5" [formGroupName]="questionIndex">
-                        <button type="button" class="btn float-end" (click)="deleteQuestionById(questionIndex)"><i class="fas fa-times"></i></button>
-                        <p class="lead">Вопрос {{ questionIndex + 1 }}</p>
-                        <div class="form-group">
-                            <label>Название вопроса:</label>
-                            <input type="text" formControlName="question" class="form-control">
-                        </div>
-                        <div class="form-group my-2" formArrayName="answers">
-                            <p>Ответы:</p>
-                            <ul class="list-group" *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let answerIndex=index">
-                                <li class="list-group-item my-3" [formGroupName]="answerIndex">
-                                    <label for="answer">Ответ:</label>
-                                    <button type="button" class="btn float-end" (click)="deleteAnswerById(questionIndex, answerIndex)"><i class="fas fa-times"></i></button>
-                                    <input id="answer" type="text" formControlName="answer" class="form-control">
-                                    <div class="div my-3">
-                                        <label for="correct" class="form-check-label">Правильный ответ?</label>
-                                        <input class="form-check-input ml-3" type="checkbox" formControlName="correct">
-                                    </div>
-                                </li>
-                            </ul>
-                            <button type="button" (click)="addAnswerToId(questionIndex)" class="btn btn-success float-end">Добавить ответ</button>
-                        </div>
-                    </li>
-                </ul>
-                <button type="button" (click)="addQuestion()" class="btn btn-success my-3">Добавить вопрос</button>
-            </div>
-            <div class="form-group text-end mt-3">
-                <button routerLink="/tests" type="button" class="btn btn-danger mr-auto">Отмена</button>
-                <button type="submit" [disabled]="!form.valid" class="btn btn-success">OK</button>
-            </div>
-        </form>
-    </div>
-</div>
+              <div class="form-group" formGroupName="topic">
+                  <label for="id" class="add-test__label">Тема:</label>
+                  <select class="form-select add-test__input" formControlName="id">
+                      <option *ngFor="let topic of articleTopics" [ngValue]="topic.id">{{topic.name}}
+                      </option>
+                  </select>
+              </div>
+              <div class="text-muted mt-2 mb-3">
+                  <span id="topic-add-suggestion" (click)="openTopicPopup()" class="add-theme">Не нашли подходящей темы? Добавьте новую</span>
+                </div>
+                <app-modal id="topic-popup" (onClose)="this.updateTopics()">
+                  <app-article-topic-form (deletedTopicId)="this.updateTopicsAfterTopicDeletion($event)"></app-article-topic-form>
+                </app-modal>
+              <div class="form-group">
+                  <label for="description" class="add-test__label">Описание</label>
+                  <input id="description" type="text" formControlName="description" class="form-control add-test__input" placeholder="Введите описание теста">
+              </div>
+              <div class="form-group" formArrayName="questions">
+                  <ul class="list-group" *ngFor="let question of questions.controls; let questionIndex=index">
+                      <li class="list-group-item my-3 ms-5" [formGroupName]="questionIndex">
+                          <button type="button" class="btn float-end" (click)="deleteQuestionById(questionIndex)"><i class="fas fa-times"></i></button>
+                          <p class="lead">Вопрос {{ questionIndex + 1 }}</p>
+                          <div class="form-group">
+                              <label class="add-test__label">Название вопроса</label>
+                              <input type="text" formControlName="question" class="form-control add-test__input">
+                          </div>
+                          <div class="form-group my-2" formArrayName="answers">
+                              <p>Ответы:</p>
+                              <ul class="list-group" *ngFor="let answer of getAnswersByQuestionId(questionIndex).controls; let answerIndex=index">
+                                  <li class="list-group-item my-3" [formGroupName]="answerIndex">
+                                      <label for="answer" class="add-test__label">Ответ</label>
+                                      <button type="button" class="btn float-end" (click)="deleteAnswerById(questionIndex, answerIndex)"><i class="fas fa-times"></i></button>
+                                      <input id="answer" type="text" formControlName="answer" class="form-control add-test__input">
+                                      <div class="div my-3">
+                                          <label for="correct" class="form-check-label">Правильный ответ?</label>
+                                          <input class="form-check-input ml-3" type="checkbox" formControlName="correct" id="correct">
+                                      </div>
+                                  </li>
+                              </ul>
+                              <button type="button" (click)="addAnswerToId(questionIndex)" class="btn btn-success float-end add-test__button button-reset">Добавить ответ</button>
+                          </div>
+                      </li>
+                  </ul>
+                  <button type="button" (click)="addQuestion()" class="btn btn-success my-3 add-test__button button-reset">Добавить вопрос</button>
+              </div>
+              <div class="form-group text-end mt-3">
+                <button type="submit" [disabled]="!form.valid" class="btn btn-success add-test__button button-reset">Добавить</button>
+                <button routerLink="/tests" type="button" class="btn btn-danger mr-auto add-test__button-cancel button-reset">Отмена</button>
+              </div>
+          </form>
+      </div>
+  </div>
+  

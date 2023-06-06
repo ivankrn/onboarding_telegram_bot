@@ -34,8 +34,23 @@
     background-color: #009d63;
     color: white;
 }
-  
+
 .add-button:hover {
     color: white;
     background-color:rgba(0, 157, 99, 0.7);
+}
+
+body {
+  font-family: 'Muller', sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.button-reset {
+  padding: 0;
+  border: none;
+  background-color: transparent;
 }

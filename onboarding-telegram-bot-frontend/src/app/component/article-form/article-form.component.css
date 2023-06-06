@@ -1,3 +1,104 @@
 #topic-add-suggestion {
     cursor: pointer;
 }
+
+.button-reset {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.main__add-article {
+  margin-bottom: 15px;
+}
+
+.add-article__label {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+.add-article__input {
+  margin-bottom: 25px;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 30px;
+}
+
+.main__add-article input::placeholder, .main__add-article textarea::placeholder, .main__add-article select {
+  font-family: 'Muller';
+  font-weight: 250;
+  font-size: 15px;
+  line-height: 15px;
+  color: #000000;
+}
+
+.main__add-article textarea {
+  resize: none;
+}
+
+.main__add-article {
+  background-color: #fff;
+  border: 7px solid #C8C8C8;
+  border-radius: 50px;
+  padding: 20px;
+}
+
+.main__title {
+  margin: 0;
+  padding: 0;
+  padding-left: 40px;
+  margin-bottom: 20px;
+  font-weight: 400;
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.add-article__button-cancel {
+  background: #FF7500;
+  border-radius: 10px;
+  font-family: 'Muller';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 7px 40px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.add-article__button-cancel:hover {
+  background-color: #ffba80;
+}
+
+.add-article__button-cancel:active {
+  background-color: #FF7500;
+}
+
+.add-article__button {
+  background: #00AA13;
+  border-radius: 10px;
+  font-family: 'Muller';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 7px 40px;
+  margin-right: 20px;
+}
+
+.add-article__button:hover {
+  background-color: #9AE6A2;
+}
+
+.add-article__button:focus {
+  background-color: #00AA13;
+}
+
+.add-article__button:active {
+  background-color: #00AA13;
+}
+
+.add-theme {
+  color: #00AA13;
+}
