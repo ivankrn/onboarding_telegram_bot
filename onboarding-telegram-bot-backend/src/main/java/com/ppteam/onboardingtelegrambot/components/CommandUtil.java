@@ -1,6 +1,7 @@
 package com.ppteam.onboardingtelegrambot.components;
 
 import com.ppteam.onboardingtelegrambot.CallbackQueryCommand;
+import org.aspectj.weaver.ast.Call;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -59,7 +60,8 @@ public class CommandUtil {
 
     public static long parseTestId(String[] message) {
         String command = parseCommand(message);
-        if (!command.equals(CallbackQueryCommand.BEGIN_TEST_BY_ID)) {
+        if (!command.equals(CallbackQueryCommand.BEGIN_TEST_BY_ID)
+                && !command.equals(CallbackQueryCommand.SHOW_CORRECT_ANSWERS_FOR_TEST_WITH_ID)) {
             throw new IllegalArgumentException(INVALID_COMMAND);
         }
         return Long.parseLong(message[1]);

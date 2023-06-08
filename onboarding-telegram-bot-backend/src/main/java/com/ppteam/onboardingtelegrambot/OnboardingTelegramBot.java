@@ -165,6 +165,10 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
                 long lastSelectedAnswerId = CommandUtil.parseAnswerId(message);
                 editMultipleAnswersSelection(chatId, messageId, previousMarkup, lastSelectedAnswerId);
                 break;
+            case CallbackQueryCommand.SHOW_CORRECT_ANSWERS_FOR_TEST_WITH_ID:
+                testId = CommandUtil.parseTestId(message);
+                showCorrectAnswersForTest(chatId, testId);
+                break;
         }
     }
 
@@ -203,9 +207,18 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         message.setText(formatArticle(article));
         message.setReplyMarkup(Buttons.articleRatingMarkup(articleId));
         executeMessageWithLogging(message);
+        sendArticleActionsMenu(chatId, article);
+    }
+
+    private void sendArticleActionsMenu(long chatId, ArticleDto article) {
         if (article.getTestId() != null) {
             offerTestById(chatId, article.getTestId());
         }
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("Доступные действия:");
+        message.setReplyMarkup(Buttons.articleActionsMenuMarkup(article));
+        executeMessageWithLogging(message);
     }
 
     private String formatArticle(ArticleDto article) {
@@ -405,6 +418,53 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Ваш счет: " + session.getScore());
         executeMessageWithLogging(message);
+        sendTestActionsMenu(chatId, session);
+    }
+
+    private void sendTestActionsMenu(long chatId, TestSessionDto session) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText("Доступные действия:");
+        TestDto test = testService.findById(session.getTestId());
+        message.setReplyMarkup(Buttons.testActionsMenuMarkup(test));
+        executeMessageWithLogging(message);
+    }
+
+    private void showCorrectAnswersForTest(long chatId, long testId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        TestFullDto test = testService.findByIdWithQuestionsAndAnswers(testId);
+        message.setText(formatQuestions(test.getQuestions()));
+        executeMessageWithLogging(message);
+    }
+
+    private String formatQuestions(List<TestQuestionFullDto> questions) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < questions.size(); i++) {
+            TestQuestionFullDto question = questions.get(i);
+            sb.append(i + 1);
+            sb.append(") ");
+            sb.append(question.getQuestion());
+            sb.append("\n");
+            if (isQuestionWithMultipleCorrectAnswers(question)) {
+                sb.append("Правильные ответы:");
+            } else {
+                sb.append("Правильный ответ:");
+            }
+            sb.append("\n");
+            for (int j = 0; j < question.getAnswers().size(); j++) {
+                TestAnswerDto answer = questions.get(i).getAnswers().get(j);
+                if (answer.isCorrect()) {
+                    sb.append("\t");
+                    sb.append(j + 1);
+                    sb.append(") ");
+                    sb.append(answer.getAnswer());
+                    sb.append("\n");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     private void sendText(long chatId, String text) {

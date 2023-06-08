@@ -16,6 +16,7 @@ public class CallbackQueryCommand {
     public static final String CHOOSE_FOR_QUESTION_WITH_ID = "/choose_for_question";
     public static final String MULTIPLE_CHOOSE_FOR_QUESTION_WITH_ID = "/multiple_choose_for_question";
     public static final String SELECT_MULTIPLE_FOR_QUESTION_WITH_ID = "/select_multiple_for_question";
+    public static final String SHOW_CORRECT_ANSWERS_FOR_TEST_WITH_ID = "/show_correct_answers_for_test";
     public static final String PAGE = "page";
     public static final String TEST = "test";
     public static final String ARTICLE = "article";
@@ -70,5 +71,9 @@ public class CallbackQueryCommand {
 
     public static String selectMultipleForQuestion(long questionId, long answerId) {
         return SELECT_MULTIPLE_FOR_QUESTION_WITH_ID + SEPARATOR + questionId + SEPARATOR + ANSWER + SEPARATOR + answerId;
+    }
+
+    public static String showCorrectAnswersForTest(long testId) {
+        return SHOW_CORRECT_ANSWERS_FOR_TEST_WITH_ID + SEPARATOR + testId;
     }
 }

@@ -9,7 +9,8 @@ public interface TestService {
 
     Page<TestDto> findByTopicId(long topicId, Pageable page);
 
-    TestFullDto findById(long id);
+    TestDto findById(long id);
+    TestFullDto findByIdWithQuestionsAndAnswers(long id);
 
     long count();
 

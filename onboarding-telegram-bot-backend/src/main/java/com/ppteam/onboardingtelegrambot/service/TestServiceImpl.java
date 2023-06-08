@@ -27,8 +27,13 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public TestFullDto findById(long id) {
-        return testRepository.findById(id).map(testMapper::testToTestFullDto)
+    public TestDto findById(long id) {
+        return testRepository.findById(id).map(testMapper::testToTestDto).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public TestFullDto findByIdWithQuestionsAndAnswers(long id) {
+        return testRepository.findByIdWithQuestionsAndAnswers(id).map(testMapper::testToTestFullDto)
                 .orElseThrow(NotFoundException::new);
     }
 
