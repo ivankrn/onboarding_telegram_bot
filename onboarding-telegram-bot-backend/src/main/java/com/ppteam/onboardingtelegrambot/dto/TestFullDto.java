@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class TestFullDto {
@@ -18,5 +18,5 @@ public class TestFullDto {
     private String description;
     private OffsetDateTime createdAt;
     @NotEmpty
-    private Set<TestQuestionFullDto> questions;
+    private List<TestQuestionFullDto> questions;
 }

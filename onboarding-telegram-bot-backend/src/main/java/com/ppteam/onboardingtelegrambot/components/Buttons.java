@@ -1,10 +1,8 @@
 package com.ppteam.onboardingtelegrambot.components;
 
 import com.ppteam.onboardingtelegrambot.CallbackQueryCommand;
-import com.ppteam.onboardingtelegrambot.dto.ArticleDto;
-import com.ppteam.onboardingtelegrambot.dto.ArticleTopicDto;
-import com.ppteam.onboardingtelegrambot.dto.TestDto;
-import com.ppteam.onboardingtelegrambot.dto.TestQuestionFullDto;
+import com.ppteam.onboardingtelegrambot.dto.*;
+import org.aspectj.weaver.ast.Call;
 import org.springframework.data.domain.Page;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -16,6 +14,7 @@ import java.util.Set;
 
 public class Buttons {
 
+
     public static final String SEND_MULTIPLE_CHOICE_TEXT = "Отправить выбранные ответы";
     private static final String uncheckedIcon = "\u2610";
     private static final String checkedIcon = "\u2611";
@@ -25,12 +24,9 @@ public class Buttons {
         browseArticlesButton.setCallbackData(CallbackQueryCommand.getTopicsForArticles());
         InlineKeyboardButton browseTestsButton = new InlineKeyboardButton("Порешать тесты");
         browseTestsButton.setCallbackData(CallbackQueryCommand.getTopicsForTests());
-        InlineKeyboardButton adminPanelButton = new InlineKeyboardButton("Панель управления");
-        adminPanelButton.setCallbackData(CallbackQueryCommand.ADMIN_PANEL);
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         rows.add(List.of(browseArticlesButton));
         rows.add(List.of(browseTestsButton));
-        rows.add(List.of(adminPanelButton));
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;
@@ -119,6 +115,17 @@ public class Buttons {
         return markup;
     }
 
+    public static InlineKeyboardMarkup articleActionsMenuMarkup(ArticleDto article) {
+        InlineKeyboardButton showSameTopicArticlesButton = new InlineKeyboardButton("Показать статьи по теме");
+        showSameTopicArticlesButton.setCallbackData(
+                CallbackQueryCommand.browseArticlesByTopic(article.getTopic().getId(), 0));
+        InlineKeyboardButton backButton = getReturnBackButton();
+        List<List<InlineKeyboardButton>> rows = List.of(List.of(showSameTopicArticlesButton), List.of(backButton));
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rows);
+        return markup;
+    }
+
     public static InlineKeyboardMarkup offerTestMarkup(long testId) {
         InlineKeyboardButton beginTestButton = new InlineKeyboardButton("Начать тест");
         beginTestButton.setCallbackData(CallbackQueryCommand.beginTest(testId));
@@ -196,6 +203,31 @@ public class Buttons {
             }
         }
         return new InlineKeyboardMarkup(newKeyboard);
+    }
+
+    public static InlineKeyboardMarkup testActionsMenuMarkup(TestDto test) {
+        InlineKeyboardButton beginTestAgainButton = new InlineKeyboardButton("Начать тест заново");
+        beginTestAgainButton.setCallbackData(CallbackQueryCommand.beginTest(test.getId()));
+        InlineKeyboardButton showSameTopicTestsButton = new InlineKeyboardButton("Показать тесты по теме");
+        showSameTopicTestsButton.setCallbackData(
+                CallbackQueryCommand.browseArticlesByTopic(test.getTopic().getId(), 0));
+        InlineKeyboardButton showCorrectAnswersButton = new InlineKeyboardButton("Показать правильные ответы");
+        showCorrectAnswersButton.setCallbackData(CallbackQueryCommand.showCorrectAnswersForTest(test.getId()));
+        InlineKeyboardButton backButton = getReturnBackButton();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>(4);
+        rows.add(List.of(beginTestAgainButton));
+        rows.add(List.of(showSameTopicTestsButton));
+        rows.add(List.of(showCorrectAnswersButton));
+        rows.add(List.of(backButton));
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(rows);
+        return markup;
+    }
+
+    private static InlineKeyboardButton getReturnBackButton() {
+        InlineKeyboardButton backButton = new InlineKeyboardButton("\u21A9 Назад");
+        backButton.setCallbackData(CallbackQueryCommand.START);
+        return backButton;
     }
 
     private static List<InlineKeyboardButton> getButtonsContainingString(List<InlineKeyboardButton> buttons, String str) {

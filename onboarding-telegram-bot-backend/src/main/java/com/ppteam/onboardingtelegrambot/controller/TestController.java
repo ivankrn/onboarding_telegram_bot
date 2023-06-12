@@ -24,7 +24,7 @@ public class TestController {
 
     @GetMapping("/{id}")
     public TestFullDto getTest(@PathVariable long id) {
-        return testService.findById(id);
+        return testService.findByIdWithQuestionsAndAnswers(id);
     }
 
     @GetMapping("/count")
