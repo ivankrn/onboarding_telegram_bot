@@ -243,13 +243,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         executeMessageWithLogging(message);
     }
 
-    private void sendAdminMenu(long chatId) {
-        SendMessage message = new SendMessage();
-        message.setText("https://onboarding-bot-project.run-eu-central1.goorm.site");
-        message.setChatId(chatId);
-        executeMessageWithLogging(message);
-    }
-
     private void beginTestById(long chatId, long userId, long testId) {
         testSessionService.createForUserAndTest(userId, testId);
         sendFirstTestQuestion(chatId, userId);
