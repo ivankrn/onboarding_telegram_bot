@@ -121,9 +121,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             case CallbackQueryCommand.HELP:
                 sendText(chatId, BotCommands.HELP_TEXT);
                 break;
-            case CallbackQueryCommand.ADMIN_PANEL:
-                sendAdminMenu(chatId);
-                break;
             case CallbackQueryCommand.GET_TOPICS:
                 boolean isTestBrowsingMode = CommandUtil.parseTestBrowsingMode(message);
                 sendTopicChoiceMenu(chatId, isTestBrowsingMode);
@@ -248,7 +245,7 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
 
     private void sendAdminMenu(long chatId) {
         SendMessage message = new SendMessage();
-        message.setText("Здесь будет ссылка на админ-панель");
+        message.setText("https://onboarding-bot-project.run-eu-central1.goorm.site");
         message.setChatId(chatId);
         executeMessageWithLogging(message);
     }

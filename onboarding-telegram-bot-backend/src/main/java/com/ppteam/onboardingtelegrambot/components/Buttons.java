@@ -24,12 +24,9 @@ public class Buttons {
         browseArticlesButton.setCallbackData(CallbackQueryCommand.getTopicsForArticles());
         InlineKeyboardButton browseTestsButton = new InlineKeyboardButton("Порешать тесты");
         browseTestsButton.setCallbackData(CallbackQueryCommand.getTopicsForTests());
-        InlineKeyboardButton adminPanelButton = new InlineKeyboardButton("Панель управления");
-        adminPanelButton.setCallbackData(CallbackQueryCommand.ADMIN_PANEL);
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         rows.add(List.of(browseArticlesButton));
         rows.add(List.of(browseTestsButton));
-        rows.add(List.of(adminPanelButton));
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;
