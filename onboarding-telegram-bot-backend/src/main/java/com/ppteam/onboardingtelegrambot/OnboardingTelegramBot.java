@@ -121,9 +121,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
             case CallbackQueryCommand.HELP:
                 sendText(chatId, BotCommands.HELP_TEXT);
                 break;
-            case CallbackQueryCommand.ADMIN_PANEL:
-                sendAdminMenu(chatId);
-                break;
             case CallbackQueryCommand.GET_TOPICS:
                 boolean isTestBrowsingMode = CommandUtil.parseTestBrowsingMode(message);
                 sendTopicChoiceMenu(chatId, isTestBrowsingMode);
@@ -243,13 +240,6 @@ public class OnboardingTelegramBot extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("\uD83D\uDCDD Для данной статьи доступен тест, не желаете пройти его?");
         message.setReplyMarkup(Buttons.offerTestMarkup(testId));
-        executeMessageWithLogging(message);
-    }
-
-    private void sendAdminMenu(long chatId) {
-        SendMessage message = new SendMessage();
-        message.setText("Здесь будет ссылка на админ-панель");
-        message.setChatId(chatId);
         executeMessageWithLogging(message);
     }
 

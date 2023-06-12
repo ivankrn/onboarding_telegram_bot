@@ -1,7 +1,6 @@
 package com.ppteam.onboardingtelegrambot.components;
 
 import com.ppteam.onboardingtelegrambot.CallbackQueryCommand;
-import org.aspectj.weaver.ast.Call;
 
 import java.util.Arrays;
 import java.util.Set;
