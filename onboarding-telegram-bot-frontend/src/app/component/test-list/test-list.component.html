@@ -1,5 +1,8 @@
 <div class="col-11">
-  <h2>Список тестов</h2>
+  <h2 class="tests-list">Список тестов</h2>
+  <div class="block-add-test-button">
+    <button routerLink="create" type="submit" class="btn add-button article-list__add-test-button">Добавить тест</button>
+  </div>
   <div>
     <div class="card mb-4" *ngFor="let test of tests">
       <div class="card-body">
@@ -8,11 +11,11 @@
         <p class="card-text">{{ test.description }}</p>
         <p class="mt-3 text-end">Дата создания: {{ test.createdAt | date:'d-MM-y' }}</p>
         <div class="d-flex justify-content-end">
-          <button [routerLink]="['edit', test.id]" class="btn btn-info me-2">
-            <i class="fas fa-pen"></i>
+          <button [routerLink]="['edit', test.id]" class="btn submit-btn me-2">
+            <i class="fas fa-pen pencil"></i>
           </button>
-          <button class="btn btn-danger" (click)="onDelete(test)">
-            <i class="fas fa-times"></i>
+          <button class="btn cancel-btn" (click)="onDelete(test)">
+            <i class="fas fa-times cross"></i>
           </button>
         </div>
       </div>
@@ -23,5 +26,5 @@
       </pagination>
     </div>
   </div>
-  <button routerLink="create" type="submit" class="btn add-button article-list__add-test-button">Добавить тест</button>
 </div>
+

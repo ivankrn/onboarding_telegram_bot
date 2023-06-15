@@ -1,5 +1,5 @@
 #topic-add-suggestion {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .button-reset {
@@ -28,7 +28,9 @@
   padding: 10px 30px;
 }
 
-.main__add-article input::placeholder, .main__add-article textarea::placeholder, .main__add-article select {
+.main__add-article input::placeholder,
+.main__add-article textarea::placeholder,
+.main__add-article select {
   font-family: 'Muller';
   font-weight: 250;
   font-size: 15px;
@@ -53,8 +55,8 @@
   padding-left: 40px;
   margin-bottom: 20px;
   font-weight: 400;
-  font-size: 35px;
-  line-height: 35px;
+  font-size: calc(1.325rem + .9vw);
+  line-height: calc(1.325rem + .9vw);
 }
 
 .add-article__button-cancel {
@@ -101,4 +103,22 @@
 
 .add-theme {
   color: #00AA13;
+}
+
+@media (max-width: 800px) {
+  .main__title {
+    text-align: center;
+    padding-left: 0;
+  }
+}
+
+@media (max-width:500px) {
+  .article-buttons {
+    display: grid;
+  }
+
+  .add-article__button {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
 }

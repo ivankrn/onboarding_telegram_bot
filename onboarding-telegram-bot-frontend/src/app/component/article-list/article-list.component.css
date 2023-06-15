@@ -1,18 +1,73 @@
 .article-content {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
 
 .table-container {
-    display: table;
+  display: table;
 }
 
 .article-list__add-article-button {
-  background: #00AA13;
-  border-radius: 10px;
-  font-family: 'Muller';
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 20px;
-  padding: 7px 40px;
-  margin-right: 20px;
+background: #66C400;
+border-radius: 10px;
+font-family: 'Muller';
+font-weight: 400;
+font-size: 20px;
+line-height: 20px;
+padding: 7px 40px;
+margin-right: 20px;
+margin-bottom: 20px;
+transition: bacground-color 0.3s ease-in-out;
+}
+
+.article-list__add-article-button:active {
+background: #B9F677;
+border: #B9F677;
+}
+
+.submit-btn {
+background: #9AE6A2;
+}
+
+.submit-btn:active {
+background: #9AE6A2;
+border-color: #9AE6A2;
+}
+
+.submit-btn:hover {
+background: #80E98C;
+}
+
+.cancel-btn {
+background: #ffba80;
+}
+
+.cancel-btn:active {
+background: #ffba80;
+border-color: #ffba80;
+}
+
+.cancel-btn:hover {
+background: #FFD0A8;
+}
+
+.pencil {
+color: #00AA13;
+}
+
+.cross {
+color: #FF7500;
+}
+
+@media (max-width: 800px) {
+.articles-list {
+  text-align: center;
+}
+
+.block-add-article-button {
+  text-align: center;
+}
+
+.article-list__add-article-button {
+  margin-right: 0;
+}
 }

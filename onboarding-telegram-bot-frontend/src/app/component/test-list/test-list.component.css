@@ -1,14 +1,68 @@
 .table-container {
-    display: table;
+  display: table;
 }
 
 .article-list__add-test-button {
-  background: #00AA13;
-  border-radius: 10px;
-  font-family: 'Muller';
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 20px;
-  padding: 7px 40px;
-  margin-right: 20px;
+margin-bottom: 20px;
+background: #00AA13;
+border-radius: 10px;
+font-family: 'Muller';
+font-weight: 400;
+font-size: 20px;
+line-height: 20px;
+padding: 7px 40px;
+margin-right: 20px;
+}
+
+.article-list__add-test-button:active {
+background: #80d589;
+border: #80d589;
+}
+
+@media (max-width: 800px) {
+.tests-list {
+  text-align: center;
+}
+
+.block-add-test-button {
+  text-align: center;
+}
+
+.article-list__add-test-button {
+  margin-right: 0;
+}
+}
+
+.submit-btn {
+background: #9AE6A2;
+}
+
+.submit-btn:active {
+background: #9AE6A2;
+border-color: #9AE6A2;
+}
+
+.submit-btn:hover {
+background: #80E98C;
+}
+
+.cancel-btn {
+background: #ffba80;
+}
+
+.cancel-btn:active {
+background: #ffba80;
+border-color: #ffba80;
+}
+
+.cancel-btn:hover {
+background: #FFD0A8;
+}
+
+.pencil {
+color: #00AA13;
+}
+
+.cross {
+color: #FF7500;
 }

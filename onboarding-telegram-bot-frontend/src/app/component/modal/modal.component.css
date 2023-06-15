@@ -11,11 +11,12 @@ app-modal .my-modal {
     overflow: auto;
 }
 
-/* app-modal .my-modal-body {
-    padding: 20px;
-    background: #fff;
-} */
-
 body.my-modal-open {
     overflow: hidden;
+}
+
+@media (max-width: 800px) {
+  app-modal .my-modal {
+    padding: 100px 0;
+  }
 }

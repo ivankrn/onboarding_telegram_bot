@@ -33,7 +33,7 @@
           <option *ngFor="let test of tests | async | keyvalue" [ngValue]="test.key">{{test.value}}</option>
         </select>
       </div>
-      <div class="form-group text-end mt-3">
+      <div class="form-group text-end mt-3 article-buttons">
         <button type="submit" [disabled]="!form.valid" class="btn btn-success add-article__button button-reset">Добавить</button>
         <button routerLink="/articles" type="button" class="btn btn-danger mr-auto add-article__button-cancel button-reset">Отмена</button>
       </div>

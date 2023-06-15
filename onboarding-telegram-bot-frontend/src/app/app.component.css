@@ -73,10 +73,11 @@
 
 @media (max-width: 768px) {
   #sidebar-wrapper {
-      margin-left: -250px;
+    margin-left: -250px;
   }
+
   #sidebar-wrapper.opened {
-      margin-left: 0;
+    margin-left: 0;
   }
 }
 
@@ -89,7 +90,6 @@
   position: relative;
   justify-content: center;
   padding: 0 80px;
-  margin-bottom: 30px;
 }
 
 .header__logo {
@@ -108,77 +108,158 @@
 }
 
 .main__buttons-statistics {
-  background: #FF7500;
+  background: #ffba80;
   mix-blend-mode: normal;
   border-radius: 50px;
   font-family: 'Muller';
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
-  line-height: 30px;
-  padding: 10px;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding: 7px;
   width: inherit;
   margin-bottom: 20px;
   transition: background-color 0.3s ease-in-out;
 }
 
 .main__buttons-articles {
-  background: #97D700;
+  background: #B9F677;
   mix-blend-mode: normal;
   border-radius: 50px;
   font-family: 'Muller';
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
-  line-height: 30px;
-  padding: 10px;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding: 7px;
   width: inherit;
   margin-bottom: 20px;
   transition: background-color 0.3s ease-in-out;
 }
 
 .main__buttons-articles:hover {
-  background-color: #c1e766;
+  background-color: #66C400;
 }
 
 .list-group-item.active .main__buttons-articles {
-  background-color: #c1e766;
+  background-color: #66C400;
+  color: white;
 }
 
 .main__buttons-statistics:hover {
-  background-color: #ffba80;
+  background-color: #FF7500;
 }
 
 .list-group-item.active .main__buttons-statistics {
-  background-color: #ffba80;
+  background-color: #FF7500;
+  color: white;
 }
 
 .main__buttons-tests {
-  background: #00AA13;
+  background: #80d589;
   mix-blend-mode: normal;
   border-radius: 50px;
   font-family: 'Muller';
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
-  line-height: 30px;
-  padding: 10px;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding: 7px;
   width: inherit;
   transition: background-color 0.3s ease-in-out;
 }
 
 .main__buttons-tests:hover {
-  background-color: #9AE6A2;
-}
-
-.main__buttons-tests:focus {
   background-color: #00AA13;
 }
 
-.main__buttons-tests:active {
-  background-color: #00AA13;
-}
 
 .list-group-item.active .main__buttons-tests {
-  background-color: #80d589;
+  background-color: #00AA13;
+  color: white;
+}
+
+.burger {
+  margin-top: 27px;
+  margin-left: 24px;
+  width: 30px;
+  height: 30px;
+  transform: rotate(0deg);
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+
+.burger span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: black;
+  border-radius: 4px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: .25s ease-in-out;
+}
+
+.burger span:nth-child(1) {
+  top: 0px;
+}
+
+.burger span:nth-child(2) {
+  top: 10px;
+}
+
+.burger span:nth-child(3) {
+  top: 20px;
+}
+
+.burger.open span:nth-child(1) {
+  top: 13px;
+  transform: rotate(135deg);
+}
+
+.burger.open span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.burger.open span:nth-child(3) {
+  top: 13px;
+  transform: rotate(-135deg);
+}
+
+@media (max-width: 700px) {
+  .header__title {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .header__logo {
+    width: 100px;
+    position: initial;
+  }
+
+  .main__buttons {
+    padding: 5px;
+    font-size: 20px;
+  }
+
+  #sidebar-wrapper.opened {
+    min-width: -webkit-fill-available;
+  }
+
+  .burger {
+    margin-top: 0;
+    margin-left: 0;
+    position: absolute;
+    top: 27px;
+    left: 20px;
+    border: none;
+  }
+
+  #alerts {
+    width: 50%;
+  }
 }
